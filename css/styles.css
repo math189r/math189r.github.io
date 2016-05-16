@@ -52,6 +52,23 @@ td > h4 {
   padding: 0;
 }
 
+tr {
+  height: 4.5em;
+}
+
+tr:nth-child(odd) {
+  background-color: #fff;
+}
+
+td {
+    min-width: 8em;
+    max-width: 20em;
+}
+
+td:nth-child(1) {
+  min-width: 0;
+}
+
 /* block code */
 pre {
   background-color: #bebebe;
