@@ -1,7 +1,8 @@
 body {
-  margin: 0;
+  margin: 0 auto;
   font-family: monospace;
   background-color: #ebebeb;
+  text-align: center;
 }
 
 a {
@@ -9,11 +10,11 @@ a {
 }
 
 .header > h2 {
+  text-align: left;
   margin: 0;
   padding-left: 1em;
   height: 100%;
   font-size: 2.25em;
-  width: 100%;
   background-color: #ff4949;
   background-image: 
     linear-gradient(
@@ -36,6 +37,8 @@ a {
 }
 
 .body {
+  max-width: 50em;
+  margin: 0 auto;
   padding: 2em;
   padding-top: 0;
 }
@@ -45,6 +48,10 @@ h4 {
   margin-left: -2em;
   margin-right: -2em;
   padding: 1em 2em 0 2em;
+}
+
+table {
+    margin: 0 auto;
 }
 
 td > h4 {
@@ -63,10 +70,15 @@ tr:nth-child(odd) {
 td {
     min-width: 8em;
     max-width: 20em;
+    text-align: left;
 }
 
 td:nth-child(1) {
   min-width: 0;
+}
+
+.left-align {
+    text-align: left;
 }
 
 /* block code */
