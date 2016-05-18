@@ -19,6 +19,7 @@
 \renewcommand{\SS}{\mathbb{S}}
 \renewcommand{\aa}{\mathbf{a}}
 \newcommand{\T}{\top}
+\newcommand{\rank}{\mathrm{rank}}
 
 \newcommand{\m}[1]{\begin{bmatrix} #1 \end{bmatrix}}
 
@@ -37,9 +38,10 @@
 \tableofcontents
 \vspace{1em}
 
-This is an extension of Stanford's CS229 \textit{Linear Algebra Review and Reference}
+This is a conglomeration of Stanford's CS229 \textit{Linear Algebra Review and Reference}
 \footnote{\url{http://cs229.stanford.edu/section/cs229-linalg.pdf}}, written by Zico Kolter
-and updated by Chuong Do.
+and updated by Chuong Do, and some extra material that will be helpful in the
+course.
 
 \section{Basics}
 
@@ -166,7 +168,8 @@ and the rows of $B$.
 
 \section{Operations and Properties}
 
-Most of this should hopefully be review.
+Most of this should hopefully be review, but if you haven't seen complex matrix operations
+before don't worry we won't use them much.
 
 \subsection{The Identity Matrix and Diagonal Matrices}
 
@@ -233,8 +236,7 @@ For example,
 \subsection{Hermitian Matrices}
 
 A matrix is Hermitian if $A = A^\dagger$. This is a generalization of symmetric
-matrices from real to complex matrices, and if $A$ is Hermitian then $A$ must
-also be symmetric.
+matrices from real to complex matrices.
 
 \subsection{The Trace $\tr(A)$}
 
@@ -302,9 +304,89 @@ Norms can be extended to matrices too, as we will encounter. Here are
 a few, where $A\in\RR^{m\times n}$:
 \begin{enumerate}
     \item $||A||_F = \sqrt{\sum_{i=1}^m\sum_{j=1}^n A_{ij}^2} = \sqrt{\tr(A^\T A)}$ is the Frobenius Norm of $A$.
-    \item $||A||_* = \tr(\sqrt{A^\dagger A}) = \sum_{i=1}^\min\{m,n\}\sigma_i = $(sum of the singular values of $A$) is the Nuclear Norm
+    \item $||A||_* = \tr(\sqrt{A^\dagger A}) = \sum_{i=1}^{\min\{m,n\}}\sigma_i = $(sum of the singular values of $A$) is the Nuclear Norm
     \item $||A||_{\mathrm{max}} = \max_{ij}|A_{ij}|$
     \item $||A||_2 = \sqrt{\lambda_{max}(A^\dagger A)} = \sigma_{max}(A)$ is the Spectral Norm.
 \end{enumerate}
+
+\subsection{Linear Independence, Span and Rank}
+
+A \textit{linear combination} of the vectors $\xx_1,\xx_2,\dots,\xx_n$ is a sum
+of scalar multiples of each of the vectors. That is, for $\alpha_i\in\RR$,
+\[
+    \alpha_1\xx_1 + \alpha_2\xx_2 + \dots + \alpha_n\xx_n
+\]
+is a linear combination of those vectors, for any $\alpha_i$.\\
+
+The \textit{span} of a set of vectors $X = \{\xx_1,\xx_2,\dots,\xx_n\} \subset \RR^m$
+is every possible linear combination of $X$:
+\[
+    \mathrm{span}\{\xx_1,\xx_2,\dots,\xx_n\} = \alpha_1\xx_1 + \alpha_2\xx_2 + \dots + \alpha_n\xx_n
+\]
+for any $\alpha_1,\alpha_2,\dots,\alpha_n\in\RR$.\\
+
+A set of vectors $\{\xx_1,\xx_2,\dots,\xx_n\} \subset \RR^m$ is
+\textit{linearly independent} if no vector can be represented as
+a linear combination of the others. If some
+\[
+    \xx_i \in \mathrm{span}\{\xx_1,\xx_2,\dots, \xx_{i-1}, \xx_{i+1},\dots,\xx_n\},
+\]
+the vectors are said to be \textit{linearly dependent}. As an example,
+the vectors
+\[
+    \xx_1 = \m{1\\1\\1} \qquad \xx_2 = \m{1\\2\\3} \qquad \xx_3 = \m{0\\1\\2}
+\]
+are linearly dependent because $\xx_3 = \xx_2-\xx_1$.\\
+
+The \textit{rank} of a matrix $A\in\RR^{m\times n}$ is cardinality (size) of the largest set of
+columns in $A$ that are linearly independent (this is also called the \textit{column rank} of $A$).
+Coincidentally, this is also the cardinality of the largest set of \textit{rows} of $A$ that are 
+linearly independent (this is also called the \textit{row rank} of $A$). Here are some helpful
+properties of rank:
+\begin{enumerate}
+\item For $A\in\RR^{m\times n}$, $\rank(A)\leq\min(m,n)$. If $\rank(A)=\min(m,n)$, then $A$
+    is said to be \textit{full rank}.
+\item For $A\in\RR^{m\times n}$, $\rank(A) = \rank(A^\T)$.
+\item For $A\in\RR^{m\times n}$, $B\in\RR^{n\times p}$, $\rank(AB)\leq \min(\rank(A),\rank(B))$.
+\item For $A,B\in\RR^{m\times n}$, $\rank(A+B)\leq \rank(A) + \rank(B)$.
+\end{enumerate}
+
+\subsection{The Inverse $A^{-1}$}
+
+The \textit{inverse} of a matrix $A\in\RR^{n\times n}$, denoted $A^{-1}$, is the unique matrix
+such that
+\[
+    A^{-1}A = I = AA^{-1}.
+\]
+If we think of $A$ as a linear map from vectors $V$ in $\RR^n$ to different vectors $W$ in $\RR^n$
+such that $A : V \mapsto W$, the inverse $A^{-1}$ is the linear map (matrix) that maps vectors in
+$W$ back to $V$ such that $A^{-1}: W \mapsto V$. Then $AA^{-1}:V\mapsto W\mapsto V = I$.
+Note that this is an abuse of notation because
+$V=W$ and the $\mapsto$ does not imply a bijective mapping, but nevertheless it should convey the
+idea more intuitively.\\
+
+Using this intuition, it should be clear that a matrix $A\in\RR^{m\times n}$, which maps $A: \RR^n
+\mapsto \RR^m$ can not be invertible if $m\neq n$ because (without loss of generality suppose $m < n$)
+then you are effectively `losing information' by projecting all of $\RR^n$ into a smaller space which
+you cannot recover.\\
+
+To that end, a matrix $A\in\RR^{n\times n}$ is invertible if and only if $\rank(A) = n$. A matrix that
+is non-invertible is called \textit{singular}. Here are some helpful properties:
+\begin{enumerate}
+\item $(A^{-1})^{-1} = A$
+\item $(AB)^{-1} = B^{-1}A^{-1}$
+\item $(A^{-1})^\T = (A^\T)^{-1}$. We often denote $(A^{-1})^\T$ as $A^{-\T}$ because
+    of this fact.\\
+\end{enumerate}
+
+Given a linear system $A\xx=\bb$, if $A$ is invertible we can multiply on
+the left by $A^{-1}$, giving
+\[
+    A^{-1}A\xx = I\xx = \xx = A^{-1}\bb,
+\]
+a closed form for $\xx$. For the love of all that is holy, however, \textit{please} do
+not solve things numerically by calculating the inverse of any matrices!
+\footnote{at the very least instead of $A^{-1}\bb$ (\texttt{pinv(A)*b} Matlab or Julia) use $A\setminus\bb$
+(\texttt{A$\backslash$b} in Matlab or Julia).}
 
 \end{document}
