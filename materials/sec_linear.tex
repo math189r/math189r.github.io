@@ -1,0 +1,310 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate,mathtools}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{hyperref}
+
+\newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\0}{\mathbf{0}}
+\newcommand{\xx}{\mathbf{x}}
+\newcommand{\ii}{\mathbf{i}}
+\newcommand{\yy}{\mathbf{y}}
+\newcommand{\ww}{\mathbf{w}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\pp}{\mathbf{p}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\renewcommand{\SS}{\mathbb{S}}
+\renewcommand{\aa}{\mathbf{a}}
+\newcommand{\T}{\top}
+
+\newcommand{\m}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+
+%\renewcommand{\section}[1]{\Large\textbf{#1}}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+  \Large\textbf{Linear Algebra Review}\\
+  \large\textit{Conner DiPaolo}
+\end{center}
+\vspace*{1em}
+
+\tableofcontents
+\vspace{1em}
+
+This is an extension of Stanford's CS229 \textit{Linear Algebra Review and Reference}
+\footnote{\url{http://cs229.stanford.edu/section/cs229-linalg.pdf}}, written by Zico Kolter
+and updated by Chuong Do.
+
+\section{Basics}
+
+Linear Algebra allows us to interact with linear operators (or systems
+of linear equations) in a more powerful manner than dealing with equations.
+For example, consider the linear system
+\begin{align*}
+    x_1 + 2x_2 &= 5\\
+    3x_1 + 4x_2 &= 1.
+\end{align*}
+This can be solved for $x_1$ and $x_2$ using substitution, but it is
+convenient (for many reasons) to investigate this system more compactly,
+as a matrix-vector product. Namely,
+\[
+    A\xx = \bb
+\]
+where
+\[
+    A = \m{1&2\\3&4} \quad\text{and}\quad \bb = \m{5\\1}.
+\]
+Here, $A$ is a \textit{matrix} and $\bb$ is a \textit{vector}. Matrices are
+\textit{linear operators}. That is, they obey the following property, where
+$A$ is a matrix in $\RR^{m\times n}$, $\xx$ and $\yy$ are vectors in $\RR^n$,
+and $c$ and $d$ are scalars:
+\[
+    A(c\xx+d\yy) = cA\xx + dA\yy.
+\]
+Note that this implies that
+\[
+    A\0 = \0.
+\]
+
+\subsection{Notation}
+
+\begin{enumerate}[-]
+    \item We denote an $m\times n$ matrix of real numbers $A$ as $A\in\RR^{m\times n}$
+        (``A is in R m by n'').
+        Similarly, to declare a $m\times n$ matrix of complex numbers we say $B\in\CC^{m\times n}$.
+    \item We denote a vector $\xx$ with $n$ real elements as $x\in\RR^n$. By convention, $\xx$
+        is assumed to be a column vector (that is, equivalently, $\xx\in\RR^{n\times 1}$).
+        If we want to represent a row vector, we use $\xx^\T$, where $\T$ is the transpose.
+    \item The $i-$th element of a vector $\xx$ is denoted $x_i$.
+    \item We denote the $i,j$-th element of a matrix $A$ as $a_{ij}$, $A_{ij}$, or
+        $A_{i,j}$.
+        \[
+            A = \m{a_{11} & a_{12}&\dots&a_{1n} \\ a_{21} & a_{22} & \dots & a_{2n}\\ \vdots&\vdots&\ddots&\vdots\\a_{m1}&a_{m2}&\dots&a_{mn}}
+        \]
+    \item We denote the $j-$th column of $A$ as $A_{:,j}$.
+    \item We denote the $i-$th row of $A$ as $A_{i,:}$.
+    \item $\1$ is the vector of all ones. $\0$ is the vector of
+        all zeroes. Size is dependent on context.
+\end{enumerate}
+
+\section{Matrix Multiplication}
+
+From the intro section we have already seen a matrix-vector product $A\xx$. We will
+now define vector-vector products (the inner and outer product) and matrix-matrix
+products (which encapsulate matrix-vector products).\\
+
+The product of two matrices $A\in\RR^{m\times n}$ and $B\in\RR^{n\times p}$ is
+the matrix
+\[
+    C = AB\in\RR^{m\times p}
+\]
+where
+\[
+    C_{ij} = \sum_{k=1}^n A_{ik}B_{kj}.
+\]
+
+\subsection{Vector-Vector Products}
+
+Let $\xx,\yy\in\RR^n$. Then the \textit{inner product} (sometimes referred as the
+dot product but we won't use that terminology)
+\[
+    \langle \xx,\yy \rangle = \xx^\T\yy = \sum_{i=1}^n \xx_i\yy_i = ||\xx||_2||\yy||_2\cos\theta
+\]
+where $\theta$ is the angle between the vectors.
+Note that $\langle \cdot, \cdot \rangle: (V,V) \mapsto \RR$ (``$\langle \cdot, \cdot
+\rangle$ maps two elements of the vector space $V$ to $\RR$'') here is the standard definition of
+the inner product for the vector space $V=\RR^n$. As we will see later in the
+class, other inner products can be defined between vectors in $\RR^n$.\\
+
+The \textit{outer product} between $\xx\in\RR^m$ and $\yy\in\RR^n$ as
+\[
+    \xx\yy^\T \in \RR^{m\times n},
+\]
+a matrix.
+\[
+    (\xx\yy^\T)_{ij} = \xx_i\yy_j.
+\]
+This will be useful when we talk about Principal Component Analysis and
+Covariance.
+
+\subsection{Matrix-Vector Products}
+
+The matrix-vector product between $A\in\RR^{m\times n}$ and $\xx\in\RR^n$ is
+the vector $\yy = A\xx \in \RR^m$. We can see from the formula for matrix-matrix
+multiplication that
+\[
+    A\xx = \m{|&|& &|\\a_1&a_2&\dots&a_n\\|&|& &|}\m{x_1\\x_2\\\dots\\x_n} = x_1\m{|\\a_1\\|} + x_2\m{|\\a_2\\|} + \dots + x_n\m{|\\x_n\\|},
+\]
+a linear combination of the columns of $A$!
+
+\subsection{Matrix-Matrix Multiplication}
+
+Armed with this knowledge, we can see matrix-matrix multiplication between
+$A\in\RR^{m\times n}$ and $B\in\RR^{n\times p}$ as
+
+\[
+    AB = \m{|&|& &|\\a_1&a_2&\dots&a_n\\|&|& &|}\m{\horzbar&b_1^T&\horzbar\\\horzbar&b_2^T&\horzbar\\&\vdots&\\\horzbar&b_n^T&\horzbar} = \sum_{i=1}^n a_ib_i^\T = \m{a_i^\T b_1&a_2^\T b_2&\dots&a_1^\T b_p\\a_2^\T b_1& a_2^\T b_2i& \dots& a_2^\T b_p\\ \vdots & \vdots & \ddots & \vdots\\ a_m^\T b_1 & a_m^\T b_2 & \hdots & a_m^\T b_p},
+\]
+either an arrangement of every possible inner product between the rows of $A$
+and the columns of $B$, or a sum of outer products between the columns of $A$
+and the rows of $B$.
+
+\subsection{Properties of Matrix Multiplication}
+
+\begin{enumerate}[-]
+    \item Matrix multiplication is associative: $(AB)C = A(BC)$
+    \item Matrix multiplication is distributive: $A(B+C) = AB + AC$
+    \item Matrix multiplication is not commutative \textit{in general}:
+        $AB \neq BA$ (in the vast majority of cases).
+\end{enumerate}
+
+\section{Operations and Properties}
+
+Most of this should hopefully be review.
+
+\subsection{The Identity Matrix and Diagonal Matrices}
+
+The \textit{identity matrix}, denoted $I\in\RR^{n\times n}$, is a square matrix
+with ones on the diagonal and zeros everywhere else:
+\[
+    I_{ij} = \begin{cases} 1 & \text{if $i=j$}\\
+        0 & \text{otherwise.}
+    \end{cases}
+\]
+For any $A\in\RR^{m\times n}$,
+\[
+    AI = A = IA.
+\]
+Intuitively, this means that as an operator the identity matrix maps every
+vector to itself.\\
+
+A \textit{diagonal matrix} is a matrix where all non-diagonal elements are 0.
+This is denoted $D=\mathrm{diag}(d_1,d_2,\dots,d_n)$ where
+\[
+    D_{ij} = \begin{cases}
+        d_i & \text{if $i=j$}\\
+        0 & \text{otherwise.}
+    \end{cases}
+\]
+
+\subsection{The Transpose: $A^\T$}
+
+The \textit{transpose} of a matrix is where every row becomes a column. Given
+$A\in\RR^{m\times n}$, the transpose of $A$, $A^\T\in\RR^{n\times m}$ is defined
+as
+\[
+    (A^\T)_{ij} = A_{ji}.\\
+\]
+
+Here are some helpful properties (proofs are easily verifiable):
+\begin{enumerate}[-]
+\item $(A^\T)^\T = A$
+\item $(AB)^\T = B^\T A^\T$
+\item $(A+B)^\T = A^\T + B^\T$
+\end{enumerate}
+
+\subsection{Symmetric Matrices}
+
+A matrix $S\in\RR^{n\times n}$ is \textit{symmetric} if and only if
+$S = S^\T$. For any $A\in\RR^{n\times n}$, $A+A^\T$ and $A^\T A$
+are both symmetric. This is easily verified from the above properties.
+We denote the set of symmetric matrices in $\RR^{n\times n}$ as $\SS^n$.
+As we will see, symmetric matrices are often nice to work with.
+
+\subsection{The Conjugate Transpose: $A^\dagger$}
+
+For complex matrices $A\in\CC^{m\times n}$, the conjugate transpose of
+$A$, said ``$A$ Hermitian'' is denoted as $A^\dagger = \overline{A^\T}$.
+That is,
+\[
+    (A^\dagger)_{ij} = \overline{A}_{ji}.
+\]
+For example,
+\[
+    \m{1+2\ii & 3\ii\\ 1 & 2-\ii}^\dagger = \m{1-2\ii&1\\-3\ii&2+\ii}
+\]
+
+\subsection{Hermitian Matrices}
+
+A matrix is Hermitian if $A = A^\dagger$. This is a generalization of symmetric
+matrices from real to complex matrices, and if $A$ is Hermitian then $A$ must
+also be symmetric.
+
+\subsection{The Trace $\tr(A)$}
+
+The trace of a square matrix $A\in\RR^{n\times n}$ is the sum of the diagonal
+elements:
+\[
+    \tr A = \tr(A) = \sum_{i=1}^n A_{ii}.
+\]
+Here are some useful properties:
+\begin{enumerate}[-]
+\item For $A\in\RR^{n\times n}$, $\tr A = \tr A^\T$
+\item For $A,B\in\RR^{n\times n}$, $\tr(A+B) = \tr A + \tr B$
+\item For $A,B$ such that $AB$ is square, $\tr AB = \tr BA$
+\item For $A,B,C$ such that $ABC$ is square, $\tr ABC = \tr BCA
+    = \tr CAB$, and this can be extended to more matrices.
+\end{enumerate}
+
+(from CS229) Here's a proof of the fourth property:
+\begin{align*}
+    \tr AB &= \sum_{i=1}^m(AB)_{ii}\\
+    &= \sum_{i=1}^m\sum_{j=1} A_{ij}B_{ij}\\
+    &= \sum_{j=1}^n\sum_{i=1}^m B_{ij}A_{ij} = \sum_{j=1}^n (BA)_{ii}\\
+    &= \tr BA,
+\end{align*}
+as desired.
+
+A very useful property is that the trace of a matrix is the sum
+of the eigenvalues of that matrix, as we will see.
+
+\subsection{Norms}
+
+A \textit{norm} of a vector $||\xx||$ is to an approximation a measure of
+length of $\xx$. We define the $\ell-p$ norm as
+\[
+    ||\xx||_p = \left( \sum_{i=1}^n x_i^p \right)^{1/p}.
+\]
+The \textit{distance} between a two vectors is in an $\ell-p$ space
+is $||\xx-\yy||_p$. Euclidean distance, $||\xx-\yy||_2$ is what we normally
+consider as `distance'.
+
+There are really 4 cases of the $\ell-p$ norm that we might encounter:
+\begin{enumerate}[-]
+    \item $||\xx||_0 = $(the number of non-zero elements of $\xx$)
+    \item $||\xx||_1 = \sum |\xx_i|$. We call $||\xx-\yy||_1$ the \textit{Manhatten Distance}
+        between $\xx$ and $\yy$ because it treats walking between coordinates in
+        $\RR^n$ as walking on perpendicular streets. This is opposed to Euclidean Distance
+        where you can walk in a strait line from point to point.
+    \item $||\xx||_2 = \sqrt{\sum\xx_i}$ is the Euclidean Norm. This is what we normally
+        consider as the `length' of a vector.
+    \item $||\xx||_\infty = \max_i |x_i|$.
+\end{enumerate}
+We will encounter $\ell-p$ norms \textit{a lot} in our studies. Specifically, we can
+improve the robustness of many algorithms to outliers by constraining the norm
+of some parameter in our optimization. Infinitely many other norms can be defined,
+however. A norm is \textit{any} function $f : \RR^n \mapsto \RR$ that satisfies 4
+properties:
+\begin{enumerate}
+\item For all $\xx\in\RR^n$, $f(\xx)\geq 0$ \hfill (non-negativity)
+\item $f(\xx)=0$ if and only if $\xx=\0$ \hfill (definiteness)
+\item For all $\xx\in\RR^n$ and $t\in\RR$, $f(t\xx) = |t|f(\xx)$ \hfill (homogeneity)
+\item For all $\xx,\yy\in\RR^n$, $f(\xx+\yy) \leq f(\xx) + f(\yy)$ \hfill (triangle inequality)\\
+\end{enumerate}
+
+Norms can be extended to matrices too, as we will encounter. Here are
+a few, where $A\in\RR^{m\times n}$:
+\begin{enumerate}
+    \item $||A||_F = \sqrt{\sum_{i=1}^m\sum_{j=1}^n A_{ij}^2} = \sqrt{\tr(A^\T A)}$ is the Frobenius Norm of $A$.
+    \item $||A||_* = \tr(\sqrt{A^\dagger A}) = \sum_{i=1}^\min\{m,n\}\sigma_i = $(sum of the singular values of $A$) is the Nuclear Norm
+    \item $||A||_{\mathrm{max}} = \max_{ij}|A_{ij}|$
+    \item $||A||_2 = \sqrt{\lambda_{max}(A^\dagger A)} = \sigma_{max}(A)$ is the Spectral Norm.
+\end{enumerate}
+
+\end{document}
