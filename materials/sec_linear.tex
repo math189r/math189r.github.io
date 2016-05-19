@@ -3,6 +3,7 @@
 \usepackage{enumerate,mathtools}
 \usepackage[letterpaper,margin=1in]{geometry}
 \usepackage{hyperref}
+\usepackage{tikz}
 
 \newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
 \newcommand{\1}{\mathbf{1}}
@@ -12,6 +13,7 @@
 \newcommand{\ii}{\mathbf{i}}
 \newcommand{\yy}{\mathbf{y}}
 \newcommand{\ww}{\mathbf{w}}
+\newcommand{\uu}{\mathbf{u}}
 \newcommand{\bb}{\mathbf{b}}
 \newcommand{\pp}{\mathbf{p}}
 \newcommand{\RR}{\mathbb{R}}
@@ -20,6 +22,7 @@
 \renewcommand{\aa}{\mathbf{a}}
 \newcommand{\T}{\top}
 \newcommand{\rank}{\mathrm{rank}}
+\newcommand{\argmin}{\mathrm{argmin}}
 
 \newcommand{\m}[1]{\begin{bmatrix} #1 \end{bmatrix}}
 
@@ -220,22 +223,22 @@ are both symmetric. This is easily verified from the above properties.
 We denote the set of symmetric matrices in $\RR^{n\times n}$ as $\SS^n$.
 As we will see, symmetric matrices are often nice to work with.
 
-\subsection{The Conjugate Transpose: $A^\dagger$}
+\subsection{The Conjugate Transpose: $A^*$}
 
 For complex matrices $A\in\CC^{m\times n}$, the conjugate transpose of
-$A$, said ``$A$ Hermitian'' is denoted as $A^\dagger = \overline{A^\T}$.
+$A$, said ``$A$ Hermitian'' is denoted as $A^* = \overline{A^\T}$.
 That is,
 \[
-    (A^\dagger)_{ij} = \overline{A}_{ji}.
+    (A^*)_{ij} = \overline{A}_{ji}.
 \]
 For example,
 \[
-    \m{1+2\ii & 3\ii\\ 1 & 2-\ii}^\dagger = \m{1-2\ii&1\\-3\ii&2+\ii}
+    \m{1+2\ii & 3\ii\\ 1 & 2-\ii}^* = \m{1-2\ii&1\\-3\ii&2+\ii}
 \]
 
 \subsection{Hermitian Matrices}
 
-A matrix is Hermitian if $A = A^\dagger$. This is a generalization of symmetric
+A matrix is Hermitian if $A = A^*$. This is a generalization of symmetric
 matrices from real to complex matrices.
 
 \subsection{The Trace $\tr(A)$}
@@ -304,9 +307,9 @@ Norms can be extended to matrices too, as we will encounter. Here are
 a few, where $A\in\RR^{m\times n}$:
 \begin{enumerate}
     \item $||A||_F = \sqrt{\sum_{i=1}^m\sum_{j=1}^n A_{ij}^2} = \sqrt{\tr(A^\T A)}$ is the Frobenius Norm of $A$.
-    \item $||A||_* = \tr(\sqrt{A^\dagger A}) = \sum_{i=1}^{\min\{m,n\}}\sigma_i = $(sum of the singular values of $A$) is the Nuclear Norm
+    \item $||A||_* = \tr(\sqrt{A^* A}) = \sum_{i=1}^{\min\{m,n\}}\sigma_i = $(sum of the singular values of $A$) is the Nuclear Norm
     \item $||A||_{\mathrm{max}} = \max_{ij}|A_{ij}|$
-    \item $||A||_2 = \sqrt{\lambda_{max}(A^\dagger A)} = \sigma_{max}(A)$ is the Spectral Norm.
+    \item $||A||_2 = \sqrt{\lambda_{max}(A^* A)} = \sigma_{max}(A)$ is the Spectral Norm.
 \end{enumerate}
 
 \subsection{Linear Independence, Span and Rank}
@@ -385,8 +388,316 @@ the left by $A^{-1}$, giving
     A^{-1}A\xx = I\xx = \xx = A^{-1}\bb,
 \]
 a closed form for $\xx$. For the love of all that is holy, however, \textit{please} do
-not solve things numerically by calculating the inverse of any matrices!
+not solve systems numerically by calculating the inverse of any matrices!
 \footnote{at the very least instead of $A^{-1}\bb$ (\texttt{pinv(A)*b} Matlab or Julia) use $A\setminus\bb$
-(\texttt{A$\backslash$b} in Matlab or Julia).}
+(\texttt{A$\backslash$b} in Matlab or Julia).} Computing the inverse in general
+has numerical precision issues when done on a computer.
+
+\subsection{Orthogonal Matrices}
+
+Two vectors $\xx,\xx\in\RR^n$ are orthogonal if $\xx^\T\yy = 0$. A vector $\xx$ is normalized (that is,
+$\xx$ is a unit vector) if $||\xx||_2 = 1$. A square matrix $Q\in\RR^{n\times n}$ is \textit{orthogonal}
+if all of it's columns are orthogonal to each other and are normalized (in this case, we say that
+the collection of column vectors are \textit{orthonormal}). Thus for any orthogonal $Q$,
+\[
+    Q^\T Q = I = QQ^\T,
+\]
+so $Q^{-1} = Q^\T$. We have another nice property as well, where for any vector $\xx\in\RR^{n}$
+and orthogonal $Q\in\RR^{n\times n}$,
+\[
+    ||Q\xx||_2 = ||\xx||_2
+\]
+directly from the linear-combination-of-columns definition of matrix-vector multiplication.
+
+\subsection{Unitary Matrices}
+
+Just like Hermitian matrices extend symmetry to complex matrices, a unitary matrix
+$U\in\CC^{n\times n}$ has columns $\{\uu_1,\uu_2,\dots,\uu_n\}$ such that
+\[
+    \uu_i^\T\overline\uu_j = \begin{cases}
+        1 & \text{if $i=j$}\\
+        0 & \text{otherwise}
+    \end{cases}
+\]
+Similarly, for any unitary $U$, $U^{-1} = U^*$.
+
+\subsection{Columnspace and Nullspace of a Matrix}
+
+Given $A\in\RR^{m\times n}$, the columnspace (sometimes
+called the range) of $A$ is
+\[
+    \mathrm{col}(A) = \left\{A\xx : \xx\in\RR^n\right\} \subseteq \RR^m = \mathrm{span}\{A_{:,1}, \dots, A_{:,n}\}.
+\]
+This can be thought of as the output of the linear operator
+the matrix represents, given any possible input. If $A$ is
+square and has full rank, then $\mathrm{col}(A) = \RR^n$.\\
+
+The nullspace of $A$ is the set
+\[
+    \mathrm{null}(A) = \left\{ \xx : A\xx = \0,\quad \xx\in\RR^n \right\}.
+\]
+interestingly enough, the Rank-Nullity Theorem states that
+\[
+    \mathrm{dim}(\mathrm{null}(A)) + \mathrm{dim}(\mathrm{col}(A)) = n.
+\]
+
+\subsection{Projections}
+
+Suppose, given a matrix $A\in\RR^{m\times n}$ and a vector $\yy\in\RR^n$,
+we want to find the closest vector $\xx\in\RR^n$ within the columnspace
+of $A$. That is,
+\[
+    \mathrm{proj}_A \yy = P\yy = \xx = \argmin_{\xx\in\mathrm{col}(A)} ||\xx-\yy||_2.
+\]
+This is the \textit{projection} of $\yy$ onto $A$. The matrix $P$ that projects
+any input vector onto the columnspace of $A$. It can be shown that
+\[
+    P = A(A^\T A)^{-1}A^\T.
+\]
+As we will see this looks awfully familiar to the least-squares closed-form
+solution (and for good reason)!
+
+\subsection{The Determinant}
+
+The determinant of a square matrix $A\in\RR^{n\times n}$ is a function
+$\det: \RR^{n\times n} \mapsto \RR$ often denoted $|A|$. Geometrically,
+it corresponds to the area of the parallelogram (or parallelotope in
+$n$ dimensions) given by the columns of $A$. For example, the matrix
+\[
+    A = \m{a&c\\b&d}
+\]
+has determinant $|A| = ad-cb$ (take this as a definition for the $2\times2$
+case). Visually we can see the following:
+\begin{center}
+    \begin{tikzpicture}
+        \draw[-stealth] (0,0) -- (0,2) node[left] {$\mathbf{j}$};
+        \draw[-stealth] (0,0) -- (2,0) node[right] {$\ii$};
+        \draw[-stealth] (0,0) -- (1.5,0.75) node[right] {$\m{a\\b}$};
+        \draw[-stealth] (0,0) -- (0.75,1.5) node[above] {$\m{c\\d}$};
+
+        \draw (1.5,0.75) -- (2.25,2.25);
+        \draw (0.75,1.5) -- (2.25,2.25);
+        \draw (1.1,1.1) node {$|A|$};
+    \end{tikzpicture}
+\end{center}
+
+Algebraically, we define the $(i,j)$ minor of $A$, $A_{\backslash i, \backslash j}$
+as the matrix resulting from removing row $i$ and column $j$ from $A$. Then the
+determinant becomes
+\begin{align*}
+    |A| &= \sum_{i=1}^n (-1)^{i+j}|A_{\backslash i,\backslash j}| \hfill \text{(for any $j\in 1,\dots,n$)}\\
+        &= \sum_{j=1}^n (-1)^{i+j}|A_{\backslash i,\backslash j}| \hfill \text{(for any $i\in 1,\dots,n$)}\\
+\end{align*}
+The abjoint of $A\in\RR^{n\times n}$ is
+\[
+    \mathrm{adj}(A)_{ij} = (-1)^{i+j}|A_{\backslash i,\backslash j}|
+\]
+(note the switch of indices $A_{\backslash i,\backslash j}$). It can be shown that if $A$ is invertible
+then
+\[
+    A^{-1} = \frac{1}{|A|}\mathrm{adj}(A).
+\]
+Never use this to compute the inverse, though, because computing the determinant takes
+$n!$ time.\\
+
+Here are some nice properties of the determinant:
+\begin{enumerate}
+    \item $|A|=0$ if and only if $A$ is singular.
+    \item $|A|=|A^\T|$
+    \item $|AB|=|A||B|$ if $A,B\in\RR^{n\times n}$
+    \item if $A$ is invertible $|A^{-1}| = 1/|A|$.
+\end{enumerate}
+
+\subsection{Quadratic Forms and Positive Semidefinite Matrices}
+
+This is a pretty important concept to know about. Given a square matrix $A\in\RR^{n\times n}$
+and a vector $\xx\in\RR^n$, the scalar $\xx^\T A\xx$ is called a
+\textit{quadratic form}. We have the following definitions (where we
+always assume $\xx \neq \0$):
+\begin{enumerate}[(a)]
+    \item A symmetric matrix $A\in\SS^n$ is \textbf{positive definite}
+        if for any $\xx\in\RR^n$, $\xx^\T A\xx > 0$. This is written
+        $A \succ 0$, and the set of positive definite matrices is
+        usually denoted $\SS_{++}^n$.
+    \item A symmetric matrix $A\in\SS^n$ is \textbf{positive semidefinite}
+        if for any $\xx\in\RR^n$, $\xx^\T A\xx \geq 0$. This is written
+        $A \succeq 0$, and the set of positive semidefinite matrices is
+        usually denoted $\SS_{+}^n$.
+    \item A symmetric matrix $A\in\SS^n$ is \textbf{negative definite}
+        if for any $\xx\in\RR^n$, $\xx^\T A\xx < 0$. This is written
+        $A \prec 0$.
+    \item A symmetric matrix $A\in\SS^n$ is \textbf{negative semidefinite}
+        if for any $\xx\in\RR^n$, $\xx^\T A\xx \leq 0$. This is written
+        $A \preceq 0$.
+\end{enumerate}
+
+We will see eigenvalues later, but $\xx^\T A \xx > 0$ iff all $\lambda_i > 0$,
+and $\xx^\T A\xx \geq 0$ iff all $\lambda_i \geq 0$, etc.\\
+
+The matrix $A^\T A$ is always positive semidefinite. if $A$ is full rank, $A^\T A$
+is always positive definite.
+
+\subsection{Eigenvalues and Eigenvectors: $A\xx = \lambda \xx$}
+
+Given $A\in\RR^{n\times n}$ we say $\lambda\in\CC$ is an \textit{eigenvalue} of
+$A$ and $\xx\in\CC^n$ is a corresponding \textit{eigenvector} of $A$ if
+\[
+    A\xx = \lambda \xx,\quad \xx \neq \0.
+\]
+This implies that
+\begin{align*}
+    A\xx &= \lambda I \xx\\
+    (A-\lambda I)\xx &= 0,\text{ so}\\
+    \det(A-\lambda I) &= 0.
+\end{align*}
+This is a useful method to compute eigenvalues by hand, though it is not
+the method used in Matlab, for example, because (for one) computing the
+determinant takes $n!$ time. We call $\det(A-\lambda I)$ the \textit{characteristic
+polynomial} of $A$. Here are some nice properties of eigenvalues:
+\begin{enumerate}
+    \item $\mathrm{tr}(A) = \sum_{i=1}^n \lambda_i$
+    \item $|A| = \prod_{i=1}^n \lambda_i$
+    \item $\rank (A) = $(the number of non-zero eigenvalues of $A$)
+    \item If $A$ is invertible then $1/\lambda_i$ is an eigenvalue of
+        $A^{-1}$ with the same corresponding eigenvector as $A$
+    \item The eigenvalues of a diagonal matrix $D=\mathrm{diag}(d_1,\dots,d_n)$
+        are just the diagonal entries $d_1,\dots,d_n$.
+\end{enumerate}
+
+We can write all eigenvector equations simultaneously as
+\[
+    AX = X\Lambda,
+\]
+so if we have $n$ linearly independent eigenvectors creating $X$,
+$X$ is invertible, and right-multiplying by $X^{-1}$ we find
+\[
+    A = X\Lambda X^{-1}.
+\]
+This is called the \textit{eigendecomposition} of $A$, and if
+possible $A$ is called \textit{diagonalizable}. This is the first
+decomposition we will encounter, but we will see more soon.
+
+\subsection{Eigenvalues and Eigenvectors of Symmetric Matrices}
+
+Given $A\in\SS^n$ it can be shown that all eigenvalues of $A$ are
+real and all corresponding eigenvectors are orthonormal. Using this,
+we can show that the definiteness of a matrix can be determined only
+from its eigenvalues. Suppose $A\in\SS^n = Q\Lambda Q^\T$. Then
+\[
+    \xx^\T A\xx = \xx^\T Q\Lambda Q^\T\xx = \yy^\T\Lambda\yy = \sum_{i=1}^n \lambda_i\yy_i^2.
+\]
+Thus if all $\lambda_i > 0$, $\xx^\T A\xx > 0$. This is trivially extended
+to negative semidefiniteness, etc.
+
+\section{Matrix Factorizations}
+
+We have already seen the \textit{eigendecomposition} of a matrix $A$,
+but this is not always available (we require $n$ linearly independent
+eigenvectors). This decomposition helped us connect eigenvalues to
+definiteness. We will see that there are other helpful decompositions
+that apply to different (or all!) classes of matrices.
+
+\subsection{Eigendecomposition: $A = X\Lambda X^{-1}$}
+
+To recap, if a matrix $A\in\RR^{n\times n}$ has $n$ linearly independent
+eigenvectors then we can construct (and show) that
+\[
+    A = X \Lambda X^{-1}
+\]
+where $X = \m{\xx_1 & \xx_2 & \dots & \xx_n}$ are the $n$ eigenvalues of
+$A$ and $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2,\dots, \lambda_n)$
+are the eigenvalues corresponding to $\xx_i$. If $A$ is symmetric, this becomes
+\[
+    A = Q\Lambda Q^\T.
+\]
+
+\subsection{Cholesky Decomposition: $A = LL^\T$}
+
+This is probably the most useful decomposition we will encounter
+in terms of our specific studies.\\
+
+The Cholesky Decomposition follows from the eigendecomposition.
+Suppose $A\in\SS^n$ is positive \textit{definite}. Then all eigenvalues
+of $A$ are positive, and we can take their square roots. Factor
+$A$ into its eigendecomposition:
+\[
+    A = Q\Lambda Q^\T.
+\]
+Denote $\Lambda^{1/2}$ as the element wise square-root of $\Lambda$
+and note that $\Lambda^{1/2}\left(\Lambda^{1/2}\right)^\T = \Lambda$.
+Then we can see that
+\[
+    A = Q\Lambda^{1/2} (\Lambda^{1/2})^\T Q^\T = Q\Lambda^{1/2}\left(Q\Lambda^{1/2}\right)^\T = LL^\T.
+\]
+This factorization $A=LL^\T$ is called the Cholesky Decomposition. Note
+that if $A$ is positive \textit{semidefinite} then there still exists such
+a decomposition but $L$ is not unique anymore.\\
+
+Why is this so useful? Consider we are given $A=LL^\T$ and the system
+\[
+    A\xx = \bb
+\]
+we wish to solve. Then
+\[
+    LL^\T\xx = \bb,
+\]
+and
+\[
+    \xx = L^{-T}L^{-1}\bb = L^\T\backslash L \backslash \bb.
+\]
+
+If we were given this in Julia or Matlab we would write
+{
+\par
+\ttfamily\small
+\begin{verbatim}
+L = chol(A) # if A > 0
+x = L'\(L\b)
+\end{verbatim}
+\par
+}
+This is roughly twice as fast as standard \texttt{A$\backslash$ b}
+so if you have a positive definite matrix (eg. when working with
+kernels) use this as the first option.
+
+\subsection{Singular Value Decomposition: $A = U\Sigma V^*$}
+
+Given \textit{any} matrix $A\in\CC^{m\times n}$ (which includes the real
+case) it can be shown that we can factorize this matrix into
+\[
+    A = U\Sigma V^*
+\]
+where $U\in\CC^{m\times m}$ and $V\in\CC^{n\times n}$ are unitary and
+$\Sigma\in\CC^{m\times n} = \mathrm{diag}(\sigma_1, \sigma_2,\dots,
+\sigma_{\min(m,n)})$ is diagonal. We won't delve into computing the
+decomposition by hand but it can be seen easily by forming $AA^*$ and
+$A^*A$ with the above definition and computing two eigendecompositions.\\
+
+Here are just a few of the use cases of the SVD (Singular Value Decomposition):
+\begin{enumerate}
+\item We will see the Moore-Penrose Pseudoinverse in our class: for any
+    tall $A$ of full rank, the Moore-Penrose Pseudoinverse (a generalization
+    of the regular inverse, \texttt{pinv(A)} in Julia/Matlab) is
+    $A^+ = (A^\T A)^{-1}A^T$ which becomes $A^+ = (A^*A)^{-1}A^*$ for complex
+    $A$. We can compute the pseudoinverse as $A^+ = V\Sigma^+ U^\T$, where
+    $\Sigma^+$ is found by taking the reciprocal of all entries and transposing
+    that matrix.
+\item Say we want a rank $k$ approximation to any $A\in\RR^{m\times n}$:
+    \[
+        \argmin || A - \tilde A ||_F.
+    \]
+    This can be generated by taking the SVD of $A$ and setting all
+    $\sigma_i : i > k$ to zero. The special case of $k=1$, giving an
+    approximation $A \approx \xx\yy^\T$ can be constructed from SVD
+    to have $\xx,\yy \succeq 0$, a special case of non-negative matrix
+    factorization we will see later in the context of recommender systems.
+\end{enumerate}
+
+\section{Matrix Calculus}
+
+Most of you probably haven't been taught all of this yet. That's okay. Matrix calculus
+is, above all, is just a way to make notation much simpler when dealing with
+optimization involving linear operations. Most of this should be \textit{very}
+reminiscent of single variable calculus.
 
 \end{document}
