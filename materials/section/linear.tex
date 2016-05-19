@@ -4,6 +4,7 @@
 \usepackage[letterpaper,margin=1in]{geometry}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{pgfplots}
 
 \newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
 \newcommand{\1}{\mathbf{1}}
@@ -14,7 +15,9 @@
 \newcommand{\yy}{\mathbf{y}}
 \newcommand{\ww}{\mathbf{w}}
 \newcommand{\uu}{\mathbf{u}}
+\renewcommand{\aa}{\mathbf{a}}
 \newcommand{\bb}{\mathbf{b}}
+\newcommand{\cc}{\mathbf{c}}
 \newcommand{\pp}{\mathbf{p}}
 \newcommand{\RR}{\mathbb{R}}
 \newcommand{\CC}{\mathbb{C}}
@@ -25,8 +28,6 @@
 \newcommand{\argmin}{\mathrm{argmin}}
 
 \newcommand{\m}[1]{\begin{bmatrix} #1 \end{bmatrix}}
-
-%\renewcommand{\section}[1]{\Large\textbf{#1}}
 
 \setlength{\parindent}{0pt}
 
@@ -41,10 +42,15 @@
 \tableofcontents
 \vspace{1em}
 
-This is a conglomeration of Stanford's CS229 \textit{Linear Algebra Review and Reference}
+This is an adaptation of Stanford's CS229 \textit{Linear Algebra Review and Reference}
 \footnote{\url{http://cs229.stanford.edu/section/cs229-linalg.pdf}}, written by Zico Kolter
 and updated by Chuong Do, and some extra material that will be helpful in the
-course.
+course.\\
+
+\textbf{To the Reader:} If you want a brief and \textit{very} comprehensive reference/resource
+of anything Linear Algebra related (including a ton of matrix derivatives at the beginning)
+check out the Matrix Cookbook \footnote{\url{https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf}}.
+It has over 800 citations in the literature!
 
 \section{Basics}
 
@@ -697,7 +703,189 @@ Here are just a few of the use cases of the SVD (Singular Value Decomposition):
 
 Most of you probably haven't been taught all of this yet. That's okay. Matrix calculus
 is, above all, is just a way to make notation much simpler when dealing with
-optimization involving linear operations. Most of this should be \textit{very}
+linear operations. Most of this should be \textit{very}
 reminiscent of single variable calculus.
+
+\subsection{The Gradient: $\nabla f$}
+
+Suppose we are given $f : \RR^{m\times n} \mapsto \RR$, a function taking in a matrix
+$A\in\RR^{m\times n}$ and mapping that to a real number (one example might be the determinant).
+The \textit{gradient} of $f$ with respect to $A$ is the matrix of partial derivatives
+\[
+    \nabla_A f = \nabla f = \m{\frac{\partial f}{\partial A_{11}} & \frac{\partial f}{\partial A_{12}} & \dots & \frac{\partial f}{\partial A_{1n}}\\
+    \frac{\partial f}{\partial A_{21}} & \frac{\partial f}{\partial A_{22}} & \dots & \frac{\partial f}{\partial A_{2n}}\\
+    \vdots & \vdots & \ddots & \vdots\\
+    \frac{\partial f}{\partial A_{m1}} & \frac{\partial f}{\partial A_{m2}} & \dots & \frac{\partial f}{\partial A_{mn}}
+    } \in \RR^{m\times n}
+\]
+That is,
+\[
+    (\nabla f)_{ij} = \frac{\partial f}{\partial A_{ij}}.
+\]
+note that dimensionality is preserved ($A,\nabla f(A) \in \RR^{m\times n}$). Therefore,
+if $A$ is a vector $\xx\in\RR^n$ we have
+\[
+    \nabla_\xx f = \nabla f = \m{\frac{\partial f}{\partial \xx_1} \\ \frac{\partial f}{\partial \xx_2} \\ \dots \\ \frac{\partial f}{\partial \xx_n}}
+\]
+
+\subsection{The Hessian: $\nabla^2f$}
+
+Suppose we are given a function $f : \RR^n \mapsto \RR$ which takes a vector $\xx\in\RR^n$
+and outputs a scalar. The \textit{Hessian} matrix with respect to $\xx$, written $\nabla^2 f$
+or $H$, is the $n\times n$ matrix of partial derivatives
+\[
+    \left(\nabla_\xx^2 f\right)_{ij} = \left( \nabla^2f \right)_{ij} = \frac{\partial^2 f}{\partial \xx_i \partial \xx_j}.
+\]
+By the definition this implies that $\nabla^2 f$ is symmetric.\\
+
+The Hessian is a natural generalization of the single-variable idea of a second derivative to
+multiple variables.
+
+\subsubsection{Convexity}
+
+If we are given a function $f : \RR \mapsto \RR$, we know this function is convex (concave up is
+commonly used but don't say that) if the second derivative $f'' \geq 0$ for all $x$, and concave if
+$f'' \leq 0$ for all $x$. Linear functions, with $f''=0$ for all $x$ are both concave and convex.
+We can see examples of such functions in Figure (\ref{fig:convex}). We will explore more concrete
+definitions of convexity in our studies as they are very important in machine learning and
+optimization theory.\\
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{fig/convexity.eps}
+    \caption{An illustration of convex and concave functions, along with
+    an example of a funciton which is neither concave nor convex.}
+    \label{fig:convex}
+\end{figure}
+
+A natural generalization of this idea is to say a function $f : \RR^n \mapsto \RR$ is
+convex if $\nabla^2 f \succeq 0$ and $f$ is concave if $\nabla^2 f \preceq 0$. That is
+to say our generalized version of the second derivative is our generalized version of
+positive. Similarly, if $\nabla^2 f \preceq 0$ for all inputs $\xx$ then $f$ is concave.
+This will come up a lot.
+
+\subsection{Gradients and Hessians of Quadratic and Linear Functions}
+
+These functions are relatively simple but we will use them \textit{a lot}.\\
+Suppose we have $\xx,\bb\in\RR^n$ and a function $f(\xx) = \bb^\T\xx$.
+Then
+\[
+    f(\xx) = \sum_{i=1}^n \bb_i\xx_i,
+\]
+and
+\[
+    \frac{\partial f}{\partial \xx_k} = \frac{\partial}{\partial \xx_k} \sum_{i=1}^n \bb_i\xx_i = b_k.
+\]
+Thus the gradient $\nabla f = \nabla \bb^\T\xx = \bb$. In the single variable case
+we have the familiar $\frac{d}{dx}(ax) = a$. It follows immediately because $\nabla^2 f
+= \nabla (\nabla f)^\T$ that $\nabla^2 \bb^\T\xx = 0$.\\
+
+Suppose we have the quadratic function $f(\xx) = \xx^\T A\xx$ where $A\in\SS^n$. Recall
+\[
+    f(\xx) = \sum_{i=1}^n\sum_{j=1}^n A_{ij}\xx_i\xx_j.
+\]
+There will be $n$ terms with $\xx_k$ in them, so
+\[
+    \frac{\partial f}{\partial \xx_k} = \frac{\partial}{\partial \xx_k} \sum_{i=1}^n\sum_{j=1}^n A_{ij}\xx_i\xx_j = 2\sum_{i=1}^nA_{ki}\xx_i = 2A_{k:}\xx
+\]
+Thus we have the gradient $\nabla f = \nabla \xx^\T A\xx = 2A\xx$. This should be reminiscent
+of the single variable case $\frac{d}{dx}(ax^2) = 2ax$. Now we look for the Hessian of the
+same quadratic $f$. Taking partials, it follows that
+\[
+    \frac{\partial^2 f}{\partial \xx_k\partial \xx_l} = \frac{\partial}{\partial \xx_k}\left[ \frac{\partial f}{\partial \xx_l} \right] = \frac{\partial}{\partial \xx_k} 2A_{k:}\xx = 2A_{kl}.
+\]
+Thus the Hessian $\nabla^2 f = \nabla^2 \xx^\T A\xx = 2A$, which should be reminiscent of
+as single variable cave $\frac{d^2}{dx^2}(ax^2) = 2a$.\\
+
+It should then be obvious, because scaling preserves convexity, that any quadratic function
+\[
+    f(\xx) = \xx^\T A\xx + \bb^\T\xx + \cc
+\]
+is convex if and only if $A \succeq 0$ and concave if and only if $A \preceq 0$. In the case
+that $A=O$ (the null matrix containing all zeroes) we have shown that a linear function
+$f(\xx) = \bb^\T\xx + \cc$ is both concave and convex, just as in the single variable case!\\
+
+To recap:
+\begin{figure}[htpb]
+    \centering
+    \begin{tabular}{c|c|c}
+        $f$ & $\nabla f$ & $\nabla^2 f$\\
+        $\bb^\T\xx$ & $\bb$ & $0$\\
+        $\xx^\T A\xx$ & $2A\xx$ & $2A$
+    \end{tabular}
+    \caption{Gradients and Hessians of very common functions
+    involving linear operations.}
+    \label{table:derivs}
+\end{figure}
+
+\subsubsection{Taylor Expansions: $f(\xx) \approx f(\aa) + \nabla f(\aa)^\T (\xx-\aa) + \frac{1}{2}(\xx-\aa)^\T \nabla^2 f (\xx-\aa)$}
+
+You should already be familiar with Taylor's Theorem for a single variable function
+$f : \RR \mapsto \RR$, where, about some point $a$
+\[
+    f(x) \approx f(a) + f'(a)(x-a) + \frac{f''(a)}{2}(x-a)^2 + \dots.
+\]
+
+We can extend this (without proof) to multiple variable functions
+$f : \RR^n \mapsto \RR$ up to a quadratic approximation (you would need
+to invoke tensors for higher orders: ew!) as
+\[
+    f(\xx) \approx f(\aa) + \nabla f^\T(\xx-\aa) + \frac{1}{2}(\xx-\aa)^\T \nabla^2 f (\xx-\aa).
+\]
+It follows immediately that if $f$ is convex or concave, the quadratic
+Taylor approximation of $f$ is simiarly convex or concave, respectively.
+This will be usefull in the context of the Newton-Raphson method for
+convex optimization.
+
+\subsection{Least Squares}
+
+Now let's re-derive the closed form expression for fitting a line
+to data. Suppose we are given matrices $A\in\RR^{m\times n}$ (where
+$A$ is full rank) and a vector $\bb\in\RR^m$. We want to find a vector
+$\xx\in\RR^n$ such that $A\xx=\bb$, but $\bb$ may be outside the
+columnspace of $A$ (because $A$ is tall). Therefore we try to find
+$\xx$ so that we minimize the $\ell-2$ distance from $A\xx$ to $\bb$.
+That is,
+\[
+    \text{minimize: } f(\xx) = ||A\xx - \bb||_2^2 = (A\xx - \bb)^\T(A\xx-\bb) = \xx^\T A^\T A\xx - 2\bb^\T A\xx + \bb^\T\bb.
+\]
+At the minimum (because this problem is unconstrained) $\nabla f = 0$, so
+\[
+    \nabla \left(\xx^\T A^\T A\xx - 2\bb^\T A\xx + \bb^\T\bb\right) = 2A^\T A\xx - 2A^\T \bb = 0,
+\]
+so we see that
+\[
+    \xx = (A^\T A)^{-1}A^\T\bb,
+\]
+as desired.
+
+\subsection{Eigenvalues as Optimization}
+
+Now we will consider an optimization problem that we will see when
+discussing Principal Component Analysis, which will lead directly
+to eigenvalues and eigenvectors. Consider the following problem:
+\begin{align*}
+    \text{maximize: } & \xx^\T A\xx\\
+    \text{subj. to: } & ||\xx||_2 = 1\\
+\end{align*}
+where $A\in\SS^n$.
+First note that the constraint is the same as $||\xx||_2^2 = \xx^\T\xx = 1$.
+We can form the Lagrangian of this problem (don't worry if you haven't seen this we
+will see it much more in the future) as
+\[
+    \mathcal{L}(x,\lambda) = \xx^\T A\xx - \lambda (\xx^\T\xx - 1).
+\]
+at the optimal value it can be shown as part of the KKT conditions that
+$\nabla_\xx \mathcal{L} = \0$, so
+\[
+    \nabla_\xx \mathcal{L} = 2A\xx - 2\lambda\xx = 0,
+\]
+so any optimum (maximum or minimum) must satisfy
+\[
+    A\xx = \lambda\xx,
+\]
+an eigenvalue-eigenvector pair! It can be shown that the largest eigenvalue
+corresponds to the maximum of $\xx^\T A\xx$ and the smallest eigenvalue corresponds
+to the minimum of $\xx^\T A\xx$.
 
 \end{document}
