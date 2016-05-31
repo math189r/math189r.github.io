@@ -1,0 +1,185 @@
+% Linear Algebra %
+
+%
+\setlength\unitlength{1mm}
+
+\newcommand{\insertfig}[3]{
+\begin{figure}[htbp]\begin{center}\begin{picture}(120,90)
+\put(0,-5){\includegraphics[width=12cm,height=9cm,clip=]{#1.eps}}\end{picture}\end{center}
+\caption{#2}\label{#3}\end{figure}}
+
+\newcommand{\insertxfig}[4]{
+\begin{figure}[htbp]
+\begin{center}
+\leavevmode \centerline{\resizebox{#4\textwidth}{!}{\input
+#1.pstex_t}}
+%\vspace*{-0.2in}
+\caption{#2} \label{#3}
+\end{center}
+\end{figure}}
+
+\long\def\comment#1{}
+
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+% bb font symbols
+
+\newfont{\bbb}{msbm10 scaled 700}
+\newcommand{\CCC}{\mbox{\bbb C}}
+
+\newfont{\bbf}{msbm10 scaled 1100}
+\newcommand{\CC}{\mbox{\bbf C}}
+\newcommand{\PP}{\mbox{\bbf P}}
+\newcommand{\RR}{\mbox{\bbf R}}
+\newcommand{\QQ}{\mbox{\bbf Q}}
+\newcommand{\ZZ}{\mbox{\bbf Z}}
+\newcommand{\FF}{\mbox{\bbf F}}
+\newcommand{\GG}{\mbox{\bbf G}}
+\newcommand{\EE}{\mbox{\bbf E}}
+\newcommand{\NN}{\mbox{\bbf N}}
+\newcommand{\KK}{\mbox{\bbf K}}
+
+% Vectors
+
+\renewcommand{\aa}{{\bf a}}
+\newcommand{\bb}{{\bf b}}
+\newcommand{\cc}{{\bf c}}
+\newcommand{\dd}{{\bf d}}
+\newcommand{\ee}{{\bf e}}
+\newcommand{\ff}{{\bf f}}
+\renewcommand{\gg}{{\bf g}}
+\newcommand{\hh}{{\bf h}}
+\newcommand{\ii}{{\bf i}}
+\newcommand{\jj}{{\bf j}}
+\newcommand{\kk}{{\bf k}}
+\renewcommand{\ll}{{\bf l}}
+\newcommand{\mm}{{\bf m}}
+\newcommand{\nn}{{\bf n}}
+\newcommand{\oo}{{\bf o}}
+\newcommand{\pp}{{\bf p}}
+\newcommand{\qq}{{\bf q}}
+\newcommand{\rr}{{\bf r}}
+\renewcommand{\ss}{{\bf s}}
+\renewcommand{\tt}{{\bf t}}
+\newcommand{\uu}{{\bf u}}
+\newcommand{\ww}{{\bf w}}
+\newcommand{\vv}{{\bf v}}
+\newcommand{\xx}{{\bf x}}
+\newcommand{\yy}{{\bf y}}
+\newcommand{\zz}{{\bf z}}
+\newcommand{\0}{{\bf 0}}
+\newcommand{\1}{{\bf 1}}
+
+% Matrices
+
+\newcommand{\Ab}{{\bf A}}
+\newcommand{\Bb}{{\bf B}}
+\newcommand{\Cb}{{\bf C}}
+\newcommand{\Db}{{\bf D}}
+\newcommand{\Eb}{{\bf E}}
+\newcommand{\Fb}{{\bf F}}
+\newcommand{\Gb}{{\bf G}}
+\newcommand{\Hb}{{\bf H}}
+\newcommand{\Ib}{{\bf I}}
+\newcommand{\Jb}{{\bf J}}
+\newcommand{\Kb}{{\bf K}}
+\newcommand{\Lb}{{\bf L}}
+\newcommand{\Mb}{{\bf M}}
+\newcommand{\Nb}{{\bf N}}
+\newcommand{\Ob}{{\bf O}}
+\newcommand{\Pb}{{\bf P}}
+\newcommand{\Qb}{{\bf Q}}
+\newcommand{\Rb}{{\bf R}}
+\newcommand{\Sb}{{\bf S}}
+\newcommand{\Tb}{{\bf T}}
+\newcommand{\Ub}{{\bf U}}
+\newcommand{\Wb}{{\bf W}}
+\newcommand{\Vb}{{\bf V}}
+\newcommand{\Xb}{{\bf X}}
+\newcommand{\Yb}{{\bf Y}}
+\newcommand{\Zb}{{\bf Z}}
+
+% Calligraphic
+
+\newcommand{\Ac}{{\cal A}}
+\newcommand{\Bc}{{\cal B}}
+\newcommand{\Cc}{{\cal C}}
+\newcommand{\Dc}{{\cal D}}
+\newcommand{\Ec}{{\cal E}}
+\newcommand{\Fc}{{\cal F}}
+\newcommand{\Gc}{{\cal G}}
+\newcommand{\Hc}{{\cal H}}
+\newcommand{\Ic}{{\cal I}}
+\newcommand{\Jc}{{\cal J}}
+\newcommand{\Kc}{{\cal K}}
+\newcommand{\Lc}{{\cal L}}
+\newcommand{\Mc}{{\cal M}}
+\newcommand{\Nc}{{\cal N}}
+\newcommand{\Oc}{{\cal O}}
+\newcommand{\Pc}{{\cal P}}
+\newcommand{\Qc}{{\cal Q}}
+\newcommand{\Rc}{{\cal R}}
+\newcommand{\Sc}{{\cal S}}
+\newcommand{\Tc}{{\cal T}}
+\newcommand{\Uc}{{\cal U}}
+\newcommand{\Wc}{{\cal W}}
+\newcommand{\Vc}{{\cal V}}
+\newcommand{\Xc}{{\cal X}}
+\newcommand{\Yc}{{\cal Y}}
+\newcommand{\Zc}{{\cal Z}}
+
+% Bold greek letters
+
+\newcommand{\alphab}{\hbox{\boldmath$\alpha$}}
+\newcommand{\betab}{\hbox{\boldmath$\beta$}}
+\newcommand{\gammab}{\hbox{\boldmath$\gamma$}}
+\newcommand{\deltab}{\hbox{\boldmath$\delta$}}
+\newcommand{\etab}{\hbox{\boldmath$\eta$}}
+\newcommand{\lambdab}{\hbox{\boldmath$\lambda$}}
+\newcommand{\epsilonb}{\hbox{\boldmath$\epsilon$}}
+\newcommand{\nub}{\hbox{\boldmath$\nu$}}
+\newcommand{\mub}{\hbox{\boldmath$\mu$}}
+\newcommand{\zetab}{\hbox{\boldmath$\zeta$}}
+\newcommand{\phib}{\hbox{\boldmath$\phi$}}
+\newcommand{\psib}{\hbox{\boldmath$\psi$}}
+\newcommand{\thetab}{\hbox{\boldmath$\theta$}}
+\newcommand{\taub}{\hbox{\boldmath$\tau$}}
+\newcommand{\omegab}{\hbox{\boldmath$\omega$}}
+\newcommand{\xib}{\hbox{\boldmath$\xi$}}
+\newcommand{\sigmab}{\hbox{\boldmath$\sigma$}}
+\newcommand{\pib}{\hbox{\boldmath$\pi$}}
+\newcommand{\rhob}{\hbox{\boldmath$\rho$}}
+
+\newcommand{\Gammab}{\hbox{\boldmath$\Gamma$}}
+\newcommand{\Lambdab}{\hbox{\boldmath$\Lambda$}}
+\newcommand{\Deltab}{\hbox{\boldmath$\Delta$}}
+\newcommand{\Sigmab}{\hbox{\boldmath$\Sigma$}}
+\newcommand{\Phib}{\hbox{\boldmath$\Phi$}}
+\newcommand{\Pib}{\hbox{\boldmath$\Pi$}}
+\newcommand{\Psib}{\hbox{\boldmath$\Psi$}}
+\newcommand{\Thetab}{\hbox{\boldmath$\Theta$}}
+\newcommand{\Omegab}{\hbox{\boldmath$\Omega$}}
+\newcommand{\Xib}{\hbox{\boldmath$\Xi$}}
+
+
+% mixed symbols
+
+\newcommand{\sinc}{{\hbox{sinc}}}
+\newcommand{\diag}{{\hbox{diag}}}
+\renewcommand{\det}{{\hbox{det}}}
+\newcommand{\trace}{{\hbox{tr}}}
+\newcommand{\tr}{\trace}
+\newcommand{\sign}{{\hbox{sign}}}
+\renewcommand{\arg}{{\hbox{arg}}}
+\newcommand{\var}{{\hbox{var}}}
+\newcommand{\cov}{{\hbox{cov}}}
+\renewcommand{\Re}{{\rm Re}}
+\renewcommand{\Im}{{\rm Im}}
+\newcommand{\eqdef}{\stackrel{\Delta}{=}}
+\newcommand{\defines}{{\,\,\stackrel{\scriptscriptstyle \bigtriangleup}{=}\,\,}}
+\newcommand{\<}{\left\langle}
+\renewcommand{\>}{\right\rangle}
+\newcommand{\Psf}{{\sf P}}
+\newcommand{\T}{\top}
+\newcommand{\m}[1]{\begin{bmatrix} #1 \end{bmatrix}}
