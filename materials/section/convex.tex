@@ -88,7 +88,7 @@ a convex set:
         \begin{tikzpicture}
             \begin{scope}[shift={(-3,0)}]
                 \draw (0,3.5) node {\textbf{Convex Set}};
-                \fill[color=blue!30] (0,0) -- (-1,2) -- (0,3) -- (1,2.5) -- (2,0)  -- cycle;
+                \fill[color=green!30] (0,0) -- (-1,2) -- (0,3) -- (1,2.5) -- (2,0)  -- cycle;
                 \draw[very thick] (-0.5,2) -- (1,0.5);
             \end{scope}
             \begin{scope}[shift={(3,0)}]
@@ -118,7 +118,7 @@ a convex set:
 
 \subsection{Examples of Convex and Non-Convex Sets}
 
-\begin{example}[All of $\RR^n$ is convex.]
+\begin{example}[All of $\RR^n$]
     $\RR^n$ is convex.
 \end{example}
 \begin{proof}
@@ -143,7 +143,8 @@ a convex set:
     Left as an exercise to the reader.
 \end{proof}
 
-\begin{example}[Closed Intervals in $\RR$ are Convex]
+\begin{example}[Closed Intervals in $\RR$]
+    \label{ex:closed-intervals-convex}
     Let $C = [a,b]$ be a subset of the real numbers where $a \leq b$.
     Then $C$ is convex.
 \end{example}
@@ -169,7 +170,7 @@ a convex set:
     for any $a \leq b$.
 \end{proof}
 
-\begin{example}[The Set of All Complex Hermetian Matrices is Convex]
+\begin{example}[The Set of All Complex Hermetian Matrices]
     \label{ex:hermitian-convex}
     Let $C = \{A : A\in\CC^{n\times n} \text{ and } A^* = A\}$. $C$ is
     convex.
@@ -186,15 +187,15 @@ a convex set:
     and by the definition of convexity the set is convex.
 \end{proof}
 
-\begin{corollary}[The Set of All Real Symmetric Matrices is Convex]
+\begin{example}[The Set of All Real Symmetric Matrices]
     Let $C = \{A : A\in\RR^{n\times n} \text{ and } A^\T = A\}$. $C$ is
     convex.
-\end{corollary}
+\end{example}
 \begin{proof}
     Left as an exercise to the reader.
 \end{proof}
 
-\begin{example}[The Set of All Linear Matrix Inequalities is Convex]
+\begin{example}[The Set of All Linear Matrix Inequalities]
     Let $A_i$ and $B$ be symmetric $n\times n$ matrices and
     $\xx\in\RR^n$.
     Let $C = \{\xx : A(\xx) \preceq B\}$ where $A(\xx) = \xx_1A_1 +
@@ -213,7 +214,7 @@ a convex set:
     in $C$ and by definition $C$ is convex.
 \end{proof}
 
-\begin{example}[The Space of Probability Distributions is Convex]
+\begin{example}[The Space of Probability Distributions]
     Let $\Pc$ be the space of continuous probability distributions over
     $\RR^n$. That is, every element of $\Pc$ defines a unique probability
     density function $\PP(x) \geq 0$ such that \[\int_{\RR^n} \PP(x) dx=1.\]
@@ -238,7 +239,7 @@ a convex set:
     all valid probability distributions over $\RR^n$ is convex itself.
 \end{proof}
 
-\begin{example}[Disjoint Intervals in $\RR$ are Not Convex]
+\begin{example}[Disjoint Intervals in $\RR$]
     Let $N = [a,b] \cup [c,d]$ where $a\leq b < c \leq d$.
     $N$ is \textbf{not} convex.
 \end{example}
@@ -252,20 +253,330 @@ a convex set:
     $N$ is in $N$, and $N$ is not convex.
 \end{proof}
 
+\begin{example}[The Set of All Stochastic Matrices]
+    The set of all matrices $A$ such that for all elements $0 \leq A_{ij} \leq 1$
+    and each row sums to $1$,
+    \[
+        M = \{A : A\in\RR^{m\times n} \text{ and } 0\leq A_{ij}\leq1 \text{ and } A\1 = \1\},
+    \]
+    is convex.\\
+
+    Note that this set is the set of all matrix representations of every possible
+    Markov Chain.
+\end{example}
+\begin{proof}
+    Let $A,B\in M$ and $0\leq\theta\leq1$. Then
+    \[
+        c = \left[ \theta A + (1-\theta)B \right]_{ij} = \theta A_{ij} + (1-\theta)B_{ij}
+    \]
+    satisfies $0\leq c\leq 1$ as $A_{ij},B_{ij}\in [0,1]$ and closed intervals
+    on $\RR$ are convex as seen in Example \ref{ex:closed-intervals-convex}.\\
+
+    Further, because $A\1=\1$ and $B\1=\1$,
+    \[
+        \left[\theta A + (1-\theta)B\right]\1 = \theta A\1 + (1-\theta)B\1 = \theta\1 + (1-\theta)\1 = \1,
+    \]
+    as desired. Thus every convex combination of elements withn $M$ remains in
+    $M$, and by definition the set $M$ is convex.
+\end{proof}
+
+\begin{example}[Norm Balls]
+    For any valid norm $||\cdot||$ and scalar $r \geq 0$, the set
+    \[
+        C = \{\xx : ||\xx|| \leq r\}
+    \]
+    is convex.
+\end{example}
+\begin{proof}
+     Let $\xx$ and $\yy$ be elements from $C$ and $0\leq\theta\leq1$. Then
+     \[
+         ||\theta\xx + (1-\theta)\yy|| \leq ||\theta\xx|| + ||(1-\theta)\yy|| = \theta||\xx|| + (1-\theta)||\yy|| \leq \theta r + (1-\theta)r = r,
+     \]
+     as desired, where we used the Triangle Inequality for the first step
+     and the second used the homogeneity of norms. Thus every convex combination
+     of elements in $C$ is within $C$, and therefore $C$ is convex.
+\end{proof}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Convex Functions}
+
+You likely have already seen convex functions from your time in Calculus I in high
+school or something similar. Nevertheless, our treatment will be much more rigorous
+(though not \textit{too} rigorous) and be very applicable to our later studies.\\
+
+The most important fact to know about convex functions is that they
+\begin{enumerate}[(a)]
+    \item Have a unique global minimizer $\xx^\star$.
+    \item Generally have efficient algorithms for finding that minimizer.
+\end{enumerate}
+
+\subsection{Convex and Concave Functions}
+
+Our idea of a convex set will be useful in considering convex functions.
+
+\begin{figure}
+    \centering
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{scope}[shift={(-3,0)}]
+                \draw[->] (-2.2,0) -- (3.5,0) node[right] {$x$};
+                \draw[->] (0,-0.2) -- (0,4) node[above] {$y$};
+                \draw[domain=-2:3.3,
+                      smooth,
+                      variable=\x,
+                      blue] plot ({\x},{\x*\x/4});
+                \fill[color=white] (-1,2) rectangle (2.75,2.5);
+                \draw[fill=black] (-1,0.25) circle (0.05) node[above]{$f(\xx)$};
+                \draw[fill=black] (3,2.25) circle (0.05) node[right]{$f(\yy)$};
+                \draw (-1,-0.2) node {$\xx$};
+                \draw (3,-0.2) node {$\yy$};
+                \draw[thick] (-1,0.25) -- (3,2.25);
+                \draw (1,2.25) node {$\theta f(\xx) + (1-\theta)f(\yy)$};
+                \draw (1,-0.75) node {$\theta \xx + (1-\theta)\yy$};
+                \draw (-1,-0.75) -- ++(0,0.1) -- ++(0,-0.2) -- ++(0,0.1) -- ++(0.75,0);
+                \draw (3,-0.75) -- ++(0,0.1) -- ++(0,-0.2) -- ++(0,0.1) -- ++(-0.75,0);
+            \end{scope}
+
+            \begin{scope}[shift={(-3,0)}]
+            \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    \caption{\textbf{Convex Functions}. This function $f : [a,b] \mapsto \RR$ is convex
+    because it's domain is convex and every line between two points on the function lies
+    above the function.}
+    \label{fig:convex-function}
+\end{figure}
+
+\begin{definition}[Convex]
+    Given a convex set $C$, a function $f : C \mapsto \RR$ is convex if,
+    for $0\leq\theta\leq1$, given any $\xx,\yy\in C$,
+    \[
+        f(\theta\xx + (1-\theta)\yy) \leq \theta f(\xx) + (1-\theta)f(\yy).
+    \]
+\end{definition}
+
+Intuitively, this means that a convex function always lies under a line
+between any two points where it is evaluated. This is seen in Figure \ref{fig:convex-function}.
+
+\begin{definition}[Concave Functions]
+    Given a convex set $C$, function $f : C \mapsto \RR$ is concave
+    if $-f$ is convex. That is, for $0\leq\theta\leq1$, given any $\xx,\yy\in C$,
+    \[
+        f(\theta\xx + (1-\theta)\yy) \geq \theta f(\xx) + (1-\theta)f(\yy).
+    \]
+\end{definition}
+
+\begin{theorem}[Restriction To a Line]
+    A function $f : \RR^n \mapsto \RR$ is convex if and only
+    if $f$ is convex when restricted to any line that intersects
+    its domain. Mathematically, $f$ is convex if and only if
+    for all $x\in C$ and any $\vv\in\RR^n$ and $t\in\RR$,
+    \[
+        g(t) = f(\xx + t\vv)
+    \]
+    is convex where $g : \{t : \xx + t\vv \in C\} \mapsto \RR$
+\end{theorem}
+\begin{proof}
+    Omitted. See \textit{Convex Optimization} by Boyd and Vandenberghe.
+\end{proof}
 
 \subsection{First Order Conditions: $f(x) \geq f(y) + \nabla f(y)^\T (x-y)$}
 
+Generally speaking, determining convexity from the definition is
+hard. In this section we will develop more tractable conditions that
+will help us determine if an arbitrary function is convex. The following
+necessary and sufficient condition for convexity is called the First Order
+Condition because it relies only on the first derivative.
+
+\begin{theorem}[First Order Conditions]
+    Let $f$ be a function mapping from some convex set $C$ to $\RR$. Then
+    $f$ is convex if and only if, given $\xx$ and $\yy$ from $C$,
+    \[
+        f(\xx) \geq f(\yy) + \nabla f(\yy)^\T (\xx - \yy).
+    \]
+\end{theorem}
+\begin{proof}
+    Omitted. See \textit{Convex Optimization} by Boyd and Vandenberghe.
+\end{proof}
+
 \subsubsection{Examples On Determining Convexity}
+
+\begin{theorem}[Linear Functions are Both Concave and Convex]
+    Given a function $f : C \mapsto \RR$ where $C$ is a convex
+    set and for any $a,b\in\RR$ and $\xx,\yy\in\RR$
+    \[
+        f(a\xx + b\yy) = af(\xx) + bf(\yy),
+    \]
+    $f$ is both convex and concave. Note that $f$ is the definition
+    of a linear function.
+\end{theorem}
+\begin{proof}
+    Let $\xx,\yy$ be any elements of $C$ and $0\leq\theta\leq1$. Then
+    by linearity
+    \[
+        f(\theta\xx + (1-\theta)\yy) = \theta f(\xx) + (1-\theta)f(\yy).
+    \]
+    Thus by definition $f$ is both convex and concave.
+\end{proof}
+
+\begin{example}
+    $f(x) = x^2$ is convex.
+\end{example}
+\begin{proof}
+    We will use the much more convenient second order condition
+    for this problem later. Consider $x,y\in\RR$ and $0\leq\theta\leq1$.
+    Then
+    \begin{align*}
+        f(\theta x + (1-\theta)y) &= (\theta x + (1-\theta)y)^2\\
+        &= (\theta x + (1-\theta)y)(\theta x + (1-\theta)y)\\
+        &= \theta^2x^2 + 2\theta(1-\theta)xy + (1-\theta)^2y^2.
+    \end{align*}
+    $f$ will be convex if and only if
+    \[
+        \theta f(x) + (1-\theta)f(y) - f(\theta x + (1-\theta)y) \geq 0
+    \]
+    for all $x,y$. We have
+    \begin{align*}
+        g = \theta f(x) + (1-\theta)f(y) - f(\theta x + (1-\theta)y) &= \theta x^2 + (1-\theta)y^2 - \theta^2x^2 - 2\theta(1-\theta)xy - (1-\theta)^2y^2\\
+        &= \theta(1-\theta)x^2 - 2\theta(1-\theta)xy + \theta(1-\theta)y^2\\
+        &= \theta(1-\theta)(x-y)^2
+    \end{align*}
+    We know $(x-y)^2 \geq 0$ for all $x$ and $y$. Similarly, when
+    $\theta \in [0,1]$, both $\theta$ and $1-\theta$ are positive,
+    so this expression is positive. Thus $f$ must be convex, as desired.
+\end{proof}
 
 \subsection{Second Order Conditions: $\nabla^2 f \succeq 0$}
 
+Here we discuss the most useful condition for determining convexity.
+\begin{theorem}[Second Order Conditions]
+    A twice-differentiable function $f : C \mapsto \RR$ is convex if and
+    only if and only if the Hessian
+    \[
+        \nabla^2 f \succeq 0
+    \]
+\end{theorem}
+\begin{proof}
+    Omitted.
+\end{proof}
+
 \subsubsection{More Examples On Determining Convexity}
 
-\subsection{Concavity and Linearity}
+\begin{example}[Quadratic Functions]
+    The function $f : \RR^n \mapsto \RR$ defined by
+    \[
+        f(\xx) = \xx^\T A\xx + \bb^\T\xx + c
+    \]
+    is convex if $A \succeq 0$.
+\end{example}
+\begin{proof}
+    We know
+    \[
+        \nabla^2 f = 2A.
+    \]
+    Similarly we know that $2A \succeq 0$ if and only if
+    $A \succeq 0$. Thus by the second order conditions $f$
+    is convex if and only if $A \succeq 0$.\\
+
+    We can also show that $f$ is concave if $A\preceq 0$.
+\end{proof}
+
+\begin{example}
+    $f(x) = a\;e^x$ is convex if $a \geq 0$.
+\end{example}
+\begin{proof}
+    The Hessian
+    \[
+        \nabla^2f = \frac{d^2f}{dx^2} = a\;e^x \geq 0
+    \]
+    as long as $a\geq0$. Thus by the second order conditions
+    $f$ is convex if $a\geq0$.
+\end{proof}
+
+\begin{example}
+    The function $f : \RR^n \mapsto \RR$ defined by
+    \[
+        f(\xx) = e^{\xx^\T\xx} = e^{\xx_1^2 + \dots + \xx_n^2}
+    \]
+    is convex.
+\end{example}
+\begin{proof}
+    Each element of the Hessian
+    \[
+        \nabla^2f_{ij} = \frac{\partial^2 f}{\partial x_i \partial x_j} = 4\xx_i\xx_j e^{\xx^\T\xx}.
+    \]
+    Therefore
+    \[
+        \nabla^2f = 4\xx\xx^\T e^{\xx^\T\xx}.
+    \]
+    Is this positive semidefinite? Consider $\zz\in\RR^n$. Then
+    \[
+        \zz^\T\nabla^2 f(x)\zz = \zz^\T4\xx\xx^\T e^{\xx^\T\xx} \zz = 4(\zz^\T\xx)^2 e^{\xx^\T\xx} \geq 0
+    \]
+    because $\exp(\cdot)$ and $(\zz^\T\xx)^2$ are both non-negative.
+    Thus $\nabla^2f \succeq 0$ and by the second order conditions
+    $f$ is convex.
+\end{proof}
+
+\subsection{Operations Preserving Convexity}
+
+In this section we examine some handy tools for constructing
+convex functions from other convex functions. There are \textit{many}
+more properties than those shown here. See \textit{Convex Optimization}
+by Boyd and Vandenberghe for many others.
+
+\begin{theorem}[Non-Negative Weighted Sum]
+    The function $F : C \mapsto \RR$ where $C$ is a convex set, $f_i : C\mapsto\RR$ is a convex
+    function, $w_i \geq 0$ and
+    \[
+        F(\xx) = \sum_i w_i f_i(\xx)
+    \]
+    is convex.
+\end{theorem}
+\begin{proof}
+    Let $\xx,\yy\in C$ and $0\leq\theta\leq1$. Then
+    \begin{align*}
+        F(\theta\xx + (1-\theta)\yy) &= \sum_i w_if_i(\theta\xx + (1-\theta)\yy)\\
+        &\leq \sum_i w_i\left[ \theta f_i(\xx) + (1-\theta)f_i(\yy) \right]\\
+        &= \theta F(\xx) + (1-\theta)F(\yy),
+    \end{align*}
+    as desired.
+\end{proof}
+
+\begin{theorem}[Pointwise Maximum]
+    Given convex functions $f_i : C \mapsto \RR$, and $F : C \mapsto \RR$ defined
+    as
+    \[
+        F(\xx) = \max_i f_i(\xx),
+    \]
+    $F$ is convex.
+\end{theorem}
+\begin{proof}
+    By the definition of convexity, given $\xx,\yy\in C$ and $0\leq\theta\leq1$ we
+    have
+    \begin{align*}
+        F(\theta\xx + (1-\theta)\yy) &= \max_i f_i(\theta\xx + (1-\theta)\yy)\\
+        &\leq \max_i\{\theta f_i(\xx) + (1-\theta)f_i(\yy)\} \tag{because $f_i$ is convex}\\
+        &\leq \theta \max_i f_i(\xx) + (1-\theta)\max_i f_i(\yy)\\
+        &= \theta F(\xx) + (1-\theta) F(\yy),
+    \end{align*}
+    as desired.
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Optimization Problems}
+
+An optimization problem is a problem of the form
+\begin{align*}
+    \text{minimize: } & f_0(x)\\
+    \text{subj. to: } & f_i(x) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(x) = 0, \quad i=1,\dots,p
+\end{align*}
+where $f_0 : \RR^n \mapsto \RR$ is called the \textbf{objective function},
+$f_i : \RR^n \mapsto \RR$ is an \textbf{inequality constraint}, and
+$h_i : \RR^n \mapsto \RR$ is an \textbf{equality constraint}.
 
 \subsection{Convex Optimization Problems}
 
