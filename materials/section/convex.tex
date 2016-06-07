@@ -2,7 +2,12 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{enumerate,mathtools}
 \usepackage{tikz}
+\usepackage{hyperref}
 \usepackage[letterpaper,margin=1in]{geometry}
+
+\makeatletter
+\let\Hy@linktoc\Hy@linktoc@none
+\makeatother
 
 \input{macros.tex}
 
@@ -34,7 +39,11 @@ will know enough to be able to think about problems in new, interesting
 ways that will aid your studies in and out of machine learning.\\
 
 The only real prerequisite for this material is a strong confidence
-in linear algebra and familiarity with matrix calculus.
+in linear algebra and familiarity with matrix calculus. Note that
+much of this material stems from Boyd and Vandenberghe's insanely influential
+textbook \textit{Convex Optimization}. If you are interested in the
+topic or need a more in-depth resource, check out the book. It's free
+online\footnote{\url{http://stanford.edu/~boyd/cvxbook/}}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Convex Sets}
@@ -570,15 +579,151 @@ by Boyd and Vandenberghe for many others.
 
 An optimization problem is a problem of the form
 \begin{align*}
-    \text{minimize: } & f_0(x)\\
-    \text{subj. to: } & f_i(x) \leq 0, \quad i=1,\dots,m\\
-                      & h_i(x) = 0, \quad i=1,\dots,p
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\xx) = 0, \quad i=1,\dots,p
 \end{align*}
 where $f_0 : \RR^n \mapsto \RR$ is called the \textbf{objective function},
 $f_i : \RR^n \mapsto \RR$ is an \textbf{inequality constraint}, and
-$h_i : \RR^n \mapsto \RR$ is an \textbf{equality constraint}.
+$h_i : \RR^n \mapsto \RR$ is an \textbf{equality constraint}. The goal of
+an optimization problem, as you might be able to guess, is to find $\xx$ in
+the problem domain domain 
+\[
+    \Dc = \bigcap_{i=0}^m\mathbf{dom}\; f_i \;\cap\; \bigcap_{i=1}^p \mathbf{dom}\; h_i
+\]
+that minimizes $f_0(\xx)$ subject to the given conditions. The problem is
+said to be \textit{feasible} if such an $\xx$ exists, and \textit{infeasible}
+otherwise.\\
+
+The optimal value $p^\star$ of the problem above is defined to be
+\[
+    p^\star = \inf\{f_0(\xx) : f_i(\xx) \leq 0,\; i=1,\dots,m,\; h_i(\xx)=0,\, i=1,\dots,p\}.
+\]
+If there are feasible points $\xx_k$ with $f_0(\xx_k)\to -\infty$ as
+$k\to\infty$, then we say the problem is \textit{unbounded below}.\\
+
+Note that we could have a similarly defined \textit{maximization} problem.
+Everything is the same except for the definition of \textit{unbounded below},
+obviously.
+
+\subsection{Optimal Points}
+
+We say $\xx^\star$ is an \textit{optimal point} (or that it solves the
+above problem) if $\xx^\star$ is feasible and $f_0(\xx^\star)=p^\star$.
+If an optimal point exists, we say the problem is \textit{solvable}.\\
+
+We say a feasible point $\xx$ is \textit{locally optimal} if there exists
+some $R > 0$ such that $\xx$ solves
+
+\begin{align*}
+    \text{minimize: } & f_0(\zz)\\
+    \text{subj. to: } & f_i(\zz) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\zz) = 0, \quad i=1,\dots,p\\
+                      & || \zz - \xx ||_2 \leq R
+\end{align*}
+for variable $\zz$. This intuitively means that $\xx$ minimizes
+$f_0$ over nearby points in the feasible set.
+
+\subsection{Equivalent Problems}
+
+Given an optimization problem of the form
+\begin{align*}
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\xx) = 0, \quad i=1,\dots,p
+\end{align*}
+we may want to express our problem in a cleaner or easier
+to solve form. Under certain conditions changing our problem's
+form will not actually change the solution. Note that, as usual,
+there are a few more possible transformations that are kosher.
+Check out Boyd and Vandenberghe for these, but the ones shown here
+are likely the only ones you will need.
+
+\subsubsection{Scaling}
+
+The problem
+\begin{align*}
+    \text{minimize: } & \alpha_0f_0(\xx)\\
+    \text{subj. to: } & \alpha_if_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & \beta_ih_i(\xx) = 0, \quad i=1,\dots,p
+\end{align*}
+for $\alpha > 0$ and $\beta \neq 0$ is equivalent to the original
+problem. This should be intuitive since, for example $x^2$ is minimized
+at 0, changing the scale of your axes maintains that minimum. Similarly,
+if equality holds (ie. $4x+2=0$) multiplying by any non-zero number on
+both sides maintains that equality.
+
+\subsubsection{Change of Variables}
+
+Given an one-to-one mapping $\phi : \RR^n \mapsto \RR^n$, where the image
+(range) of $\phi$ covers the domain of your problem $\Dc$, the problem
+\begin{align*}
+    \text{minimize: } & f_0(\phi(\xx))\\
+    \text{subj. to: } & f_i(\phi(\xx)) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\phi(\xx)) = 0, \quad i=1,\dots,p
+\end{align*}
+is equivalent to the original. This should be clear. If $x$ solves the
+original problem, then $z = \phi^{-1}(x)$ solves the transformed problem.
+The converse also holds.
+
+\subsubsection{Transformation of Objective and Constrain Functions}
+
+Suppose $\psi_0 : \RR \mapsto \RR$ is monotonically increasing, $\phi_1,\dots,
+\psi_m : \RR \mapsto \RR$ satisfy $\phi_i(u) \leq 0$ if and only if $u \leq 0$,
+and $\psi_{m+1},\dots,\phi_{m+p} : \RR\mapsto\RR$ satisfy $\phi_i(u)=0$ if and only
+if $u=0$. The problem
+\begin{align*}
+    \text{minimize: } & \psi_0(f_0(\xx))\\
+    \text{subj. to: } & \psi_i(f_i(\xx)) \leq 0, \quad i=1,\dots,m\\
+                      & \psi_{m+i}(h_i(\xx)) = 0, \quad i=1,\dots,p
+\end{align*}
+is equivalent to the original. This should be evident from the conditions
+we placed on each $\psi_j$.
+
+\subsubsection{Slack Variables}
+
+This will come in very handy. A prudent observation is that $f_i(x)\leq 0$
+if and only if for some $s_i \geq 0$, $f_i(x) + s_i = 0$. Thus the problem
+\begin{align*}
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) + s_i = 0, \quad i=1,\dots,m\\
+                      & h_i(\xx) = 0, \quad i=1,\dots,p\\
+                      & s_i \geq 0, \quad i=1,\dots,m
+\end{align*}
+is equivalent to the original.
+
+\subsubsection{Epigraph Form}
+
+The \textit{epigraph form} of the original problem is
+\begin{align*}
+    \text{minimize: } & t\\
+    \text{subj. to: } & f_0(\xx) - t \leq 0,\\
+                      & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\xx) = 0, \quad i=1,\dots,p
+\end{align*}
+where $t\in\RR$. It should be clear that this is the same as the original
+problem as the first constraint can be viewed as $f_0(\xx) \leq t$. Thus
+the objective must always lie under $t$ and minimizing $t$ will minimize the
+highest possible value of $f_0$.
 
 \subsection{Convex Optimization Problems}
+
+We will now study the branch of optimization problems we will see
+\textit{extremely} often in our studies. We say a problem of the
+form
+
+\begin{align*}
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\xx) = 0, \quad i=1,\dots,p
+\end{align*}
+
+is a \textbf{convex optimization problem} if the objective function
+and inequalities $f_i$ are convex, and the equality constraints
+$h_i$ are linear. Convex problems are, as a whole, extremely \textit{nice}
+in the sense that we have efficient (read `polynomial time') algorithms
+for finding global optima.
+
 
 \subsubsection{Linear Programs}
 
@@ -586,7 +731,9 @@ $h_i : \RR^n \mapsto \RR$ is an \textbf{equality constraint}.
 
 \subsubsection{Global Optimality of a Convex Optimum}
 
-\subsection{Optimal Flow As a Convex Optimization Problem}
+\subsection{Examples of Convex Optimization Problems}
+
+\subsubsection{Optimal Flow As a Convex Optimization Problem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algorithms for Solving Convex Problems}
