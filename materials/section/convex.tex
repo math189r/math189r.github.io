@@ -317,8 +317,8 @@ school or something similar. Nevertheless, our treatment will be much more rigor
 
 The most important fact to know about convex functions is that they
 \begin{enumerate}[(a)]
-    \item Have a unique global minimizer $\xx^\star$.
-    \item Generally have efficient algorithms for finding that minimizer.
+    \item Every local minimum is a global minimum
+    \item Generally have efficient algorithms for finding such a minimizer.
 \end{enumerate}
 
 \subsection{Convex and Concave Functions}
@@ -715,25 +715,188 @@ form
 \begin{align*}
     \text{minimize: } & f_0(\xx)\\
     \text{subj. to: } & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
-                      & h_i(\xx) = 0, \quad i=1,\dots,p
+                      & A\xx = \bb
 \end{align*}
 
 is a \textbf{convex optimization problem} if the objective function
 and inequalities $f_i$ are convex, and the equality constraints
 $h_i$ are linear. Convex problems are, as a whole, extremely \textit{nice}
 in the sense that we have efficient (read `polynomial time') algorithms
-for finding global optima.
+for finding global optima.\\
 
+At heart, a convex optimization problem is 
+just a minimization of a convex function within a convex domain.
 
-\subsubsection{Linear Programs}
-
-\subsubsection{Quadratic Programs}
 
 \subsubsection{Global Optimality of a Convex Optimum}
 
+The reason that convex optimization problems are so nice to solve
+is that \textit{any} optimum is a global optimum. In other words,
+if you find some solution you find \textit{the} solution. This is
+by no means the case in non-convex problems such as neural networks,
+although you might use similar methods to find \textit{sufficiently
+good solutions}.
+
+\begin{theorem}[Global Optimality]
+    Given a convex optimization problem, and local optimum $\xx^\star$
+    such that
+    \[
+        f_0(\xx) = \inf\{f_0(\zz) : \zz\text{ feasible and } ||\zz-\xx||_2 \leq R\}
+    \]
+    for some $R > 0$. $\xx^\star$ is the global optimum.
+\end{theorem}
+\begin{proof}
+    (Boyd)
+    Suppose such a problem and local optimum. Now suppose, to the
+    contrary, that $\xx$ is \textit{not} the global optimum,
+    and therefore there exists some feasible $\yy$ such that $f_0(\yy)
+    < f_0(\xx)$. Then $||\yy-\xx||_2 >R$ because otherwise $f_0(\xx)
+    \leq f_0(\yy)$. Consider a point $\zz$ given by
+    \[
+        \zz = (1-\theta)\xx+ \theta\yy \quad\text{and}\quad \theta=\frac{R}{2||\yy-\xx||_2}.
+    \]
+    Then $||\xx-\zz||_2=R/2 < R$. By convexity of the feasible set,
+    $\zz$ is feasible. By the convexity of the objective function $f_0$
+    we also have
+    \[
+        f_0(\zz) \leq (1-\theta)f_0(\xx) + \theta f_0(\yy) < f_0(\xx),
+    \]
+    contradicting our assumption of local optimality. Thus $\xx$
+    must be the global optimum as $R\to\infty$.
+\end{proof}
+
+\subsubsection{Linear Programs}
+
+While we won't study Linear Programs much in the course, they
+are necessary to understand and are a central tool in operations
+research and graph algorithms. A linear program is a convex
+optimization problem of the form
+\begin{align*}
+    \text{minimize: } & \cc^\T\xx\\
+    \text{subj. to: } & G\xx \leq \hh,\\
+                      & A\xx = \bb
+\end{align*}
+where $G\in\RR^{m\times n}$ and $A\in\RR^{p\times n}$. Note that
+because the objective function is linear this could also have been
+a maximization problem with no change to convexity. For a ton
+of interesting applications, see Boyd and Vandenberghe, or consider
+taking the Operations Research Course!
+
+\subsubsection{Quadratic Programs}
+
+Interestingly enough, of all standard convex optimization problem classes,
+quadratic programs seem to come up the most in machine learning. Basically,
+pay attention!\\
+
+A quadratic program is an optimization program of the form
+\begin{align*}
+    \text{minimize: } & \frac{1}{2}\xx^\T P\xx + \qq^\T\xx + \rr\\
+    \text{subj. to: } & G\xx \preceq\hh\\
+                      & A\xx = \bb
+\end{align*}
+where $P\in\SS_+^n$, $G\in\RR^{m\times n}$, and $A\in\RR^{p\times n}$.
+In this class of program, we are minimizing a quadratic function inside
+of a polyhedron.
+
 \subsection{Examples of Convex Optimization Problems}
 
-\subsubsection{Optimal Flow As a Convex Optimization Problem}
+Here we present some examples of applied convex optimization
+problems, many of which are central to machine learning!
+
+\subsubsection{Analytic Centering}
+
+Consider the problem of finding the `center' of some
+polygon $\{\xx : A\xx \preceq \bb\}$. We first need to denote
+what we consider the optimal center. The \textit{Chebyshev Center}
+of a set of points $\{\xx_i\}$ is the center of the smallest
+circle that will fit around all of the points. This is easily
+expressed as the following optimization problem:
+\begin{align*}
+    \text{minimize: } & r\\
+    \text{subj. to: } & ||\xx_i - \cc||_r \leq r\\
+\end{align*}
+where $r$ and $\cc$ are variables. This is obviously convex.
+We could set $\xx_i$ as the vertices of the polygon to then find a
+center.\\
+
+But what if we wanted to create
+a \textit{unconstrained} convex optimization problem that would
+given us some definition of a `center'? First note that $A\xx \leq \bb$
+implies that $a_i^\T\xx \leq \bb_i$ where $a_i$ is the $i-$th row
+of $A$. This condition is satisfied, obviously, when $-\log (\bb_i - a_i^\T\xx)$
+exists. But more importantly, as $a_i^\T\xx$ approaches $\bb_i$, we
+note that the $-\log$ term approaches infinity. This is called a
+`$\log$ barrier'. Now if we combine a bunch of $\log$ barriers, say,
+perhaps, along each of the edges of our polygon and ``walking down
+hill'' until we find the point that minimizes all of the log barriers. This
+sounds, intuitively like a good idea of a `center', and is called the
+\textit{Analytic Center} of a polygon. This is also easily expressed as
+a convex optimization problem, this time without constraints:
+\begin{align*}
+    \text{minimize: } f_0(\xx) = -\sum_{i}\log(\bb_i - a_i^\T\xx)\\
+\end{align*}
+Note that the gradient
+\[
+    \nabla f_0 = \sum_i\frac{\aa_i}{\bb_i - \aa_i^\T\xx},
+\]
+so if you are `far' from a barrier it doesn't effect your gradient.
+
+\subsubsection{Logistic Regression}
+
+Note that our notation will assume $\xx_0=1$ as a bias term.\\
+
+Now let's reconsider logistic regression as an optimization problem.
+Suppose we have a bunch of points $\xx_i$, with labels $\yy_i \in \{0,1\}$.
+We want to classify some new point $\xx$.
+Now suppose we generate a distribution over the labels of a given point
+$\xx$ with
+\[
+    \PP(\yy = 1 | \xx,\thetab) = \sigma(\thetab^\T\xx) = \frac{1}{1 + e^{-\thetab^\T\xx}} \in (0,1).
+\]
+Intuitively, this takes regular linear regression over the binary labels
+$\{0,1\}$ and squashes it into a function $f : \RR \mapsto [0,1]$ to give
+us the ability to probabilistically interpret the output of our classifier.
+In a frequentist setting we want to maximize the \textit{likelihood} of our data,
+that is, the probability of our labelled data given our parameters (just
+$\thetab$ in this case). However, because the actual likelihood will involve
+products we can transform into log space (because $\log(x)$ is a monotonically
+increasing function!!!) and equivalently maximize the log likelihood
+\[
+    \Lc(\thetab) = \sum_{i=1}^m \log \PP(\yy=\yy_i | \xx_i, \thetab) = \sum_{i=1}^m \log \begin{cases}
+        \sigma(\thetab^\T\xx) & \text{if $\yy_i=1$}\\
+        1-\sigma(\thetab^\T\xx) & \text{otherwise}
+    \end{cases}
+\]
+Note that due to the binary labels we can represent this compactly as
+\[
+    \Lc(\thetab) = \sum_{i=1}^m \yy_i\log(\sigma(\thetab^\T\xx)) + (1-\yy_i)\log(1-\sigma(\thetab^\T\xx)).
+\]
+Now our (unconstrained) optimization problem becomes simply
+\begin{align*}
+    \text{maximize: } \Lc(\thetab)
+\end{align*}
+where we could add a $\lambda ||\thetab||_2$ regularization term if we place
+a Gaussian prior on our parameter vector $\thetab$. Usually this would be a
+good idea.\\
+
+Now to optimize this, as we will/have seen, first note that the derivative of
+the sigmoid function $\sigma'(x) = \sigma(x)\left(1-\sigma(x)\right)$. Then the
+gradient of our log output $\log\PP(\yy=1|\xx,\thetab) = \log\sigma(\thetab^\T\xx)$
+becomes
+\[
+    \nabla_\theta \log\sigma(\thetab^\T\xx) = \xx(1-\sigma(\thetab^\T\xx) ).
+\]
+Similarly,
+\[
+    \nabla_\theta \log(1-\sigma(\thetab^\T\xx)) = -\xx\sigma(\thetab^\T\xx).
+\]
+
+Prove to yourself why this is correct. Thus the derivative of our objective $\Lc(\thetab)$
+becomes
+\[
+    \nabla_\theta \Lc = \sum_{i=1}^m \left[  \yy_i(1-\sigma(\thetab^\T\xx)) - (1-\yy_i)\sigma(\thetab^\T\xx)  \right]\xx_i = \sum_{i=1}^m \left[ \yy_i - \sigma(\thetab^\T\xx) \right]\xx.
+\]
+This can be input into any standard gradient-based optimization algorithm.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algorithms for Solving Convex Problems}
