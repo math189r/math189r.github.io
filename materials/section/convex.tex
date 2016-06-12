@@ -3,6 +3,7 @@
 \usepackage{enumerate,mathtools}
 \usepackage{tikz}
 \usepackage{hyperref}
+\usepackage{algorithm2e}
 \usepackage[letterpaper,margin=1in]{geometry}
 
 \makeatletter
@@ -800,8 +801,9 @@ of a polyhedron.
 
 \subsection{Examples of Convex Optimization Problems}
 
-Here we present some examples of applied convex optimization
-problems, many of which are central to machine learning!
+Here we present two examples of applied convex optimization
+problems. See \textit{Convex Optimization} by Boyd \&
+Vandenberghe for many, many more.
 
 \subsubsection{Analytic Centering}
 
@@ -817,11 +819,15 @@ expressed as the following optimization problem:
 \end{align*}
 where $r$ and $\cc$ are variables. This is obviously convex.
 We could set $\xx_i$ as the vertices of the polygon to then find a
-center.\\
+center. But that has some issues, for example, when your polygon
+is a very long, thin rectangle with a triangle slapped onto one side
+of it. The Chebyshev Center won't include be affected by the triangle
+at all until it hits the end of the circle. To remedy this issue we
+will consider a more effective method of finding the center below.\\
 
-But what if we wanted to create
+What if we wanted to create
 a \textit{unconstrained} convex optimization problem that would
-given us some definition of a `center'? First note that $A\xx \leq \bb$
+given us some definition of a `center'? First note that $A\xx \preceq \bb$
 implies that $a_i^\T\xx \leq \bb_i$ where $a_i$ is the $i-$th row
 of $A$. This condition is satisfied, obviously, when $-\log (\bb_i - a_i^\T\xx)$
 exists. But more importantly, as $a_i^\T\xx$ approaches $\bb_i$, we
@@ -839,7 +845,27 @@ Note that the gradient
 \[
     \nabla f_0 = \sum_i\frac{\aa_i}{\bb_i - \aa_i^\T\xx},
 \]
-so if you are `far' from a barrier it doesn't effect your gradient.
+so if you are `far' from a barrier it doesn't effect your gradient. This
+can be fed into any standard gradient based optimizer, as seen in Figure
+\ref{fig:analytic-center}\\
+
+Now let's show that the analytic centering problem is convex. First, note
+that $\log$ is a concave function (check this for yourself), so $-\log$ is
+convex. Second, as affine composition $f(A\xx + \bb)$ preserves convexity,
+$-\log(b_i - a_i^\T\xx_i)$ is also convex. Finally, as a non-negative weighted
+sum of convex functions, the final objective $f_0$ is therefore convex.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{fig/analytic_centering.pdf}
+    \caption{\textbf{Analytic Centering}. Here we compute the analytic center
+    of a polygon in $\RR^2$. Contour lines represent the objective surface
+    while the red path represents the progression of gradient descent. The
+    star is the optimal center. See \url{https://math189r.github.io/materials/section/fig_code/analytic_centering.py}
+    for code to generate this plot.}
+    \label{fig:analytic-center}
+\end{figure}
+
 
 \subsubsection{Logistic Regression}
 
@@ -864,7 +890,7 @@ increasing function!!!) and equivalently maximize the log likelihood
 \[
     \Lc(\thetab) = \sum_{i=1}^m \log \PP(\yy=\yy_i | \xx_i, \thetab) = \sum_{i=1}^m \log \begin{cases}
         \sigma(\thetab^\T\xx) & \text{if $\yy_i=1$}\\
-        1-\sigma(\thetab^\T\xx) & \text{otherwise}
+        1-\sigma(\thetab^\T\xx) & \text{if $\yy_i=0$}
     \end{cases}
 \]
 Note that due to the binary labels we can represent this compactly as
@@ -875,7 +901,7 @@ Now our (unconstrained) optimization problem becomes simply
 \begin{align*}
     \text{maximize: } \Lc(\thetab)
 \end{align*}
-where we could add a $\lambda ||\thetab||_2$ regularization term if we place
+where we could add a $\lambda \thetab^\T\thetab$ regularization term if we place
 a Gaussian prior on our parameter vector $\thetab$. Usually this would be a
 good idea.\\
 
@@ -896,14 +922,254 @@ becomes
 \[
     \nabla_\theta \Lc = \sum_{i=1}^m \left[  \yy_i(1-\sigma(\thetab^\T\xx)) - (1-\yy_i)\sigma(\thetab^\T\xx)  \right]\xx_i = \sum_{i=1}^m \left[ \yy_i - \sigma(\thetab^\T\xx) \right]\xx.
 \]
-This can be input into any standard gradient-based optimization algorithm.
+This can be input into any standard gradient-based optimization algorithm.\\
+
+Now let's show that logistic regression is convex. This is equivalent to showing
+the objective function $f_0$ is concave, as we are maximizing. As affine composition
+$f(A\xx+\bb)$ and non-negative weighted summation preserve concavity, one can
+see that this is the same as showing that
+\[
+    f(x) = \log\sigma(x)
+\]
+is concave on $\RR$. As $\sigma'(x)=\sigma(x)(1-\sigma(x))$, we can see that
+\[
+    f'(x) = \frac{\sigma(x)(1-\sigma(x))}{\sigma(x)} = 1-\sigma(x)
+\]
+and
+\[
+    f''(x) = -\sigma(x)(1-\sigma(x)),
+\]
+which always negative, because $\sigma(x)\in[0,1]$. Thus the objective and
+therefore the whole problem of logistic regression is convex, as desired.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algorithms for Solving Convex Problems}
 
+As has been the theme thus far, if you want to see \textit{much} more information
+about algorimths for solving convex optimization problems, see \textit{Convex Optimization}
+by Boyd \& Vandenberghe. Here we will just revisit good old gradient descent
+and Newton's Method for solving unconstrained convex optimization problems.
+Boyd goes into detail on solving constrained optimization problems efficiently,
+but we likely won't need to do much of that (hopefully!).
+
+\begin{figure}
+    \centering
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{scope}[shift={(-3.5,0)}]
+                \draw[->] (-2.2,0) -- (3.5,0) node[right] {$x$};
+                \draw[->] (0,-0.2) -- (0,4) node[above] {$y$};
+                \draw[domain=-2:3.3,
+                      smooth,
+                      variable=\x,
+                      blue] plot ({\x},{exp(\x/5)*\x*\x/4});
+                \draw (2,0) node[below]{$\xx_0$};
+                \draw[color=black!30] (2,0) -- (2,{exp(2/5)});
+                \draw[thick,-stealth] (2,1.49) -- ++(0.75,{1.79*0.75}) node[right] {$\nabla f(x_0)$};
+                \draw (-1,0) node[below]{$\xx_1$};
+                \draw[color=black!30] (-1,0) -- (-1,{exp(-1/5)/4});
+                \draw (-1,-0.75) -- ++(0,0.1) -- ++(0,-0.2) -- ++(0,0.1) -- ++(0.5,0);
+                \draw (2,-0.75) -- ++(0,0.1) -- ++(0,-0.2) -- ++(0,0.1) -- ++(-0.5,0);
+                \draw (0.5,-0.75) node {$-\eta\nabla f(\xx_0)$};
+            \end{scope}
+            \begin{scope}[shift={(3.5,0)}]
+                \draw[->] (-2.2,0) -- (3.5,0) node[right] {$x$};
+                \draw[->] (0,-0.2) -- (0,4) node[above] {$y$};
+                \draw[domain=-2:3.3,
+                      smooth,
+                      variable=\x,
+                      blue] plot ({\x},{exp(\x/5)*\x*\x/4});
+                \draw[domain=-1.5:3.3,
+                      smooth,
+                      variable=\x,
+                      red!75] plot ({\x},{1.49182 + 1.79019*(\x-2) + 0.701158*(\x-2)*(\x-2)});
+                \draw (2,0) node[below] {$\xx_0$};
+                \draw[color=black!30] (2,0) -- (2,1.49182);
+                \draw (0.723404,0) node[below] {$\xx_1$};
+                \draw[color=black!30] (0.723404,0) -- (0.723404,0.34915);
+                \draw (0.723404,-0.5) -- ++(0,-0.1) -- ++({2-0.723404},0) -- ++(0,0.1);
+                \draw ({(2+0.723404)/2},-0.65) node[below] {$-\nabla^2f(\xx_0)^{-1}\nabla f(\xx_0)$};
+            \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    \caption{\textbf{Optimization Algorithms}. A vizualization of gradient
+    descent and Newton's Method. Newton's Method, although you can't tell
+    much in this example, is much faster. While Newton's Method analtyically
+    solves a quadratic approximation of your (hopefully convex) problem at each
+    iteration, gradient descent acts as an approximation of that, just taking
+    small steps in the right direction to optimize your problem. If the learning
+    rate $\eta$ is too large, your iterates will start to diverge. If your learning
+    rate is too small, your iterates will take too long to converge.}
+    \label{fig:optimization-algorithms}
+\end{figure}
+
 \subsection{Gradient Descent}
 
+Suppose, given $f : \RR^n \mapsto \RR$, we want to find when $f'(\xx)=0$.
+Note that while $f$ need not be convex, if $f$ is convex we are guarenteed
+to find the global optimum when we find a critical point. Now picture our function
+as a surface mapping $\RR^2$ to $\RR$. Intuitively, if we want to minimize
+$f$, we just need to walk in the direction of `down hill'. Assuming $f$ is
+once-differentiable, we can use the gradient $\nabla f$ to define this direction.
+So, given a starting point, we need to take steps in the direction of $\nabla f$
+of some size, called the learning rate $\eta$. We do this until our gradient
+$\nabla f$ is smaller than some $\epsilon$.
+
+\IncMargin{1em}
+\begin{algorithm}
+    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+    \textbf{Gradient Descent}\\
+    \Input{$f$, $\nabla f$, $\eta(t)$, starting point $\xx_0$, tolerance $\epsilon$}
+    \Output{optimal point $\xx^\star$}
+    $t \leftarrow 0$\\
+    \While{$|| \nabla f ||_2 \geq \epsilon$}{
+        $\xx_{t+1} \leftarrow \xx_t - \eta(t)\nabla f(\xx_t)$\\
+        $t \leftarrow t + 1$
+    }
+    \textbf{return } $\xx^\star = \xx_{t+1}$
+\end{algorithm}
+
+Oftentimes you can use a contant $\eta(t) = 0.01$ or some similarly small number.
+More sophisticated learning rates and augmentation terms, like adding a \textbf{momentum
+term} giving an update
+\[
+    \xx_{t+1} \leftarrow \xx_t - \eta(t)\nabla f(\xx_t) + \mu_t(\xx_t - \xx_{t-1})
+\]
+where $\mu_t$ might be a constant around $0.9$. You can get a sense of how heuristic these
+methods are!
+Some problems with gradient descent are that
+\begin{itemize}
+    \item it is slow in convergence compared to second order methods
+    \item it provides a number of hyperparameters to set, which can
+        end up using a lot of heuristic based approaches to improvement
+    \item if your problem isn't ``round'' (think $\xx^\T\xx$ where the
+        axes are scaled the same) you will end up zig-zagging along a
+        basin. Newton's method remedies this by being scale invariant
+\end{itemize}
+
+\subsubsection{Minibatch and Stochastic Gradient Descent}
+
+Often times in machine learning specifically we will have huge datasets
+and objective functions of the form
+\[
+    f_0(\theta) = \frac{1}{m}\sum_{i=1}^m f(\xx_i | \theta)
+\]
+where $\xx_i$ are our training examples and $f(\xx|\theta)$ is our loss function.
+In this case, $m$ is so large (ie. $m > 10^5$ or $m > 10^6$) that attempting to compute
+\[
+    \nabla f_0 = \frac{1}{m}\sum_{i=1}^m \nabla f(\xx_i | \theta)
+\]
+at every iteration of training using gradient descent would be too slow. Intuitively,
+if you use (batch, like above) gradient descent you have to go through your
+entire training set each iteration. If you have a million points, however,
+the last point $i=m$ will hardly give you any information on average about the surface
+you are on. Thus, a natural approximation is to select a random subset of size
+$k$ at each iteration and use those $k$ points to compute an approximated gradient
+\[
+    \nabla f_0 \approx \frac{1}{m}\sum_{i=1}^k \nabla f(\xx_i | \theta)
+\]
+and use that to compute the update. 
+
+\IncMargin{1em}
+\begin{algorithm}
+    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+    \textbf{Stochastic Gradient Descent}\\
+    \Input{$f$, $\nabla f$, $\eta(t)$, starting point $\thetab_0$, dataset $\Dc$, tolerance $\epsilon$}
+    \Output{optimal point $\thetab^\star$}
+    $t \leftarrow 0$\\
+    \While{$|| \nabla f ||_2 \geq \epsilon$}{
+        select training points $X = \{\xx_i\}_{i=1}^k\subseteq \Dc$ at random\\
+        $\thetab_{t+1} \leftarrow \thetab_t - \eta(t)\nabla f(X | \thetab_t)$\\
+        $t \leftarrow t + 1$
+    }
+    \textbf{return } $\thetab^\star = \thetab_{t+1}$
+\end{algorithm}
+
+With different values of $k$ this algorithm is called different things. The algorithm
+is theoretically guarenteed to converge for any $k$ under certain conditions on hyperparameters.
+\begin{itemize}
+    \item $k=1$ (Stochastic Gradient Descent): You might think this wouldn't
+        do too well because you lose so much information by only looking at a
+        single point but it is actually used heavily in distributed model learning
+        due to its algorithmic simplicity.
+    \item $1 < k < m$ (Minibatch Gradient Descent): This is the de-facto standard
+        for solving large problems (well, variants of the update). Usually in Deep
+        Learning people set $15 < k < 256$ with $k=128$ being pretty standard.
+    \item $k=m$ This is just regular (batch) gradient descent as seen above.
+\end{itemize}
+
 \subsection{Newton's Method}
+
+Here we introduce a method that is \textit{super fast} but probably won't scale
+to problems with more than a couple dozen thousand examples depending on your
+problem structure. Effectively Newton's Method does the following logic:
+\begin{enumerate}
+    \item We want to minimize a twice-differentiable function $f : \RR^n \mapsto \RR$. We have an
+        initial guess for the minimizer $\xx_0$.
+    \item We know how to minimize quadratic systems $\xx^\T A\xx + \bb^\T\xx + \cc$
+        in closed form. Generally speaking this is the best approximator to our function
+        that we can optimize in closed form.
+    \item Why don't we take your function and approximate it as a quadratic Taylor
+        polynomial about your guess and set your guess to be the optimum of that
+        approximation?
+\end{enumerate}
+See Figure \ref{fig:optimization-algorithms} for a visualization of a Newton step. Note 
+that, about some $\xx_0$, the quadratic Taylor approximation
+\[
+    \widetilde f(\xx) = f(\xx_0) + \nabla f(\xx_0)^\T(\xx - \xx_0) + \frac{1}{2}(\xx-\xx_0)^\T\nabla^2 f(\xx_0)(\xx-\xx_0)
+\]
+with gradient vanishing when
+\[
+    \nabla f(\xx) = \nabla f(\xx_0) + \nabla^2 f(\xx_0)(\xx-\xx_0) = 0,
+\]
+or
+\[
+    \xx = \xx_0 - \nabla^2 f(\xx_0)^{-1} \nabla f(\xx_0).
+\]
+Note that this looks strikingly similar to gradient descent, except instead of having
+a scalar learning rate we have the inverse of a linear map $\nabla^2 f(\xx_0)^{-1}$.
+Also, solving that system
+\[
+    \nabla^2f(\xx_0)\dd = \nabla f(\xx_0)
+\]
+is what calls for trouble when trying to optimize at very large scale.
+Many approximation algorithms exist (see L-BFGS for an example) to work
+in first order methods yet approximate the second order terms during optimization.
+For many problems there exists a helpful structure in the Hessian (eg. tridiagonal
+or arrow structure) you can exploit to solve that system relatively quickly. In
+general using a backslash solver (\texttt{A$\setminus$b}) is a terrible idea for
+using Newton's Method to optimize at scale because of this, but it is much preferred
+to using \texttt{pinv(A)*b} or \texttt{inv(A)*b}. If $f$ is just convex, for example you can use a
+Cholesky decomposition to cut the backslash time in half.
+
+\IncMargin{1em}
+\begin{algorithm}
+    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+    \textbf{Newton's Method}\\
+    \Input{$f$, $\nabla f$, $\nabla^2f$, starting point $\xx_0$, tolerance $\epsilon$}
+    \Output{optimal point $\xx^\star$}
+    $t \leftarrow 0$\\
+    \While{$|| \nabla f ||_2 \geq \epsilon$}{
+        solve $\nabla^2 f(\xx_t) \dd_t = \nabla f(\xx_t)$ for $\dd_t$\\
+        $\xx_{t+1} \leftarrow \xx_t - \dd_t$\\
+        $t \leftarrow t + 1$
+    }
+    \textbf{return } $\xx^\star = \xx_{t+1}$
+\end{algorithm}
+
+The reason Newton's Method is fast is because it obeys what is called \textbf{quadratic
+convergence}. Roughly speaking, once your iterates $\xx_t$ get close enough to the optimum,
+every iteration will double the number of digits you are precise to. This means that once
+you have a pretty accurate answer, running for one or two more iterations will max out
+double floating point precision on any computer. Even when you aren't in the quadratic region,
+Newton's Method's number of iterations to become $\epsilon$ suboptimal is still bounded above
+by
+\[
+    \frac{f(\xx_0)-p^\star}{\gamma} + \log_2\log_2(1/\epsilon) \tag{$\log_2\log_2(1/\epsilon)=6.$}
+\]
+where $\gamma$ is a constant depending on the problem. Usually $1/\gamma$ is about $375$,
+depending on the problem, but Newton's Method empirically converges much faster than even
+that bound.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Duality}
