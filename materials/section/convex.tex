@@ -763,7 +763,7 @@ good solutions}.
         f_0(\zz) \leq (1-\theta)f_0(\xx) + \theta f_0(\yy) < f_0(\xx),
     \]
     contradicting our assumption of local optimality. Thus $\xx$
-    must be the global optimum as $R\to\infty$.
+    must be the global optimum ($R\to\infty$).
 \end{proof}
 
 \subsubsection{Linear Programs}
@@ -1074,7 +1074,7 @@ and use that to compute the update.
 \begin{algorithm}
     \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
     \textbf{Stochastic Gradient Descent}\\
-    \Input{$f$, $\nabla f$, $\eta(t)$, starting point $\thetab_0$, dataset $\Dc$, tolerance $\epsilon$}
+    \Input{$f$, $\nabla f$, $\eta(t)$, starting point $\thetab_0$, dataset $\Dc$, tolerance $\epsilon$, batch size $k$}
     \Output{optimal point $\thetab^\star$}
     $t \leftarrow 0$\\
     \While{$|| \nabla f ||_2 \geq \epsilon$}{
@@ -1093,7 +1093,7 @@ is theoretically guarenteed to converge for any $k$ under certain conditions on 
         single point but it is actually used heavily in distributed model learning
         due to its algorithmic simplicity.
     \item $1 < k < m$ (Minibatch Gradient Descent): This is the de-facto standard
-        for solving large problems (well, variants of the update). Usually in Deep
+        for solving large problems (well, with small variants to the update). Usually in Deep
         Learning people set $15 < k < 256$ with $k=128$ being pretty standard.
     \item $k=m$ This is just regular (batch) gradient descent as seen above.
 \end{itemize}
@@ -1165,18 +1165,178 @@ double floating point precision on any computer. Even when you aren't in the qua
 Newton's Method's number of iterations to become $\epsilon$ suboptimal is still bounded above
 by
 \[
-    \frac{f(\xx_0)-p^\star}{\gamma} + \log_2\log_2(1/\epsilon) \tag{$\log_2\log_2(1/\epsilon)=6.$}
+    \frac{f(\xx_0)-p^\star}{\gamma} + \log_2\log_2(1/\epsilon) \tag{$\log_2\log_2(1/\epsilon)\approx6.$}
 \]
 where $\gamma$ is a constant depending on the problem. Usually $1/\gamma$ is about $375$,
 depending on the problem, but Newton's Method empirically converges much faster than even
-that bound.
+that bound. See Boys \& Vandenberghe for a proof of this bound.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Duality}
 
-\subsection{Duality Gap}
+The idea of ``duality'', forming a complementary problem that maintains
+all of the information of your problem, is found all over mathematics.
+In optimization as a whole, and convex optimization specifically, optimization
+is central. First we will investigate an intuitive representation of any
+constrained convex optimization problem which will then lead us directly to
+Lagrange Duality before investigating the implications of this.
 
-\subsection{The Lagrange Dual Function}
+\subsection{Constructing The Dual}
+
+Given an optimization problem (which we will call the \textbf{primal problem})
+\begin{align*}
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\xx) = 0, \quad i=1,\dots,p
+\end{align*}
+note that minimizing $f_0$ under the constraints is the same
+as optimizing $f_0$ over all of $\RR^n$ while letting
+\[
+    f_0(\xx) = \begin{cases}
+        f_0(\xx) & \text{if constraints are satisfied}\\
+        \infty   & \text{otherwise.}
+    \end{cases}
+\]
+This makes sense, because if there is any feasible point, there will
+exist $f_0(\xx_{feasible}) < \infty$ if there is any practical solution
+to your problem. Otherwise, if $f_0(\xx_{feasible}) = \infty$, you have
+still solved your problem! The question now is how to change our constrained
+optimization problem into an unconstrained one by embedding the constraints
+in the objective. One simple way might be to use an indicator function
+\[
+    I_-(u) = \begin{cases}
+        0      & \text{if $u \leq 0$}\\
+        \infty & \text{if $u > 0$}
+    \end{cases}
+\]
+to wrap each inequality constraint, so that if at any $\xx$ any $f_i(\xx) > 0$,
+the objective will rise to infinity. Convince yourself why this would work.
+Similarly, for equality constraints, if we use another indicator function
+\[
+    I_0(u) = \begin{cases}
+        0      & \text{if $u = 0$}\\
+        \infty & \text{otherwise}
+    \end{cases}
+\]
+to wrap each equality, we can assure that our objective diverges to infinity if
+at any $\xx$ we have $h_i(\xx) \neq 0$. Our problem then becomes
+\begin{align*}
+    \text{minimize: } & f_0(\xx) + \sum_{i=1}^m I_-(f_i(\xx)) + \sum_{i=1}^p I_0(h_i(\xx)).
+\end{align*}
+Convince yourself why this is the same. You can intuitively think of the indicator
+functions as expressing a ``hard displeasure'' to the objective whenever constraints
+are not satisfied. To solve anything tractably a natural step might be to approximate
+this ``hard displeasure function'' with a ``soft'', linear displeasure function
+\[
+    I_-(u) \approx \lambda u\text{ for $\lambda \geq 0$} \qquad I_0(u) \approx \nu u \text{ for unconstrained $\nu$}.
+\]
+You can immediately see that these linear approximations are not the same, but are
+always underestimates of the hard indicators. See Figure \ref{fig:dual-vars}.
+Representing our problem in this new way we have an objective
+\begin{align*}
+    \text{minimize: } & L(\xx,\lambdab, \nub) = f_0(\xx) + \sum_{i=1}^m \lambda_i f_i(\xx) + \sum_{i=1}^p \nu_i h_i(\xx)\\
+    \text{subj. to: } & \lambdab \succeq 0.
+\end{align*}
+We call $L(\xx,\lambdab, \nub)$ the \textbf{Lagrangian} of our optimization problem.
+As our linear approximation of the indicator functions are always below these functions,
+we might see that our primal problem is \textit{exactly}
+\[
+    p^\star = \inf_\xx \sup_{\nu; \lambda \geq 0} L(\xx,\lambdab,\nub)
+\]
+The \textbf{dual} of our problem is just the flip of order with which we are
+optimizing, namely the dual
+\[
+    d^\star = \sup_{\nu; \lambda \geq 0} \inf_\xx L(\xx,\lambdab,\nub).
+\]
+
+\begin{figure}
+    \centering
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{scope}[shift=({-4,0})]
+                \draw[->] (-2.2,0) -- (3.5,0) node[right] {$u$};
+                \draw[->] (0,-0.2) -- (0,4) node[above] {$y$};
+                \draw[very thick] (-2.2,0) -- (0,0);
+                \draw[fill=black] (0,0) circle (0.07);
+                \draw[dashed, very thick] (0,3.5) -- (3.5,3.5) node[right] {$I_-(u)$};
+                \draw[fill=white] (0,3.5) circle (0.07);
+                \draw (0,3.5) node[left] {$\infty$};
+                \draw[color=blue] (-1,{0.5*-1}) -- (3.5,{0.5*3.5});
+                \draw (3.5,{0.5*3.5+0.1}) node[right] {$\lambda u$};
+            \end{scope}
+            \begin{scope}[shift=({4,0})]
+                \draw[->] (-2.2,0) -- (3.5,0) node[right] {$u$};
+                \draw[->] (0,-0.2) -- (0,4) node[above] {$y$};
+                \draw[fill=black] (0,0) circle (0.07);
+                \draw[dashed, very thick] (-2,3.5) -- (3.5,3.5) node[right] {$I_0(u)$};
+                \draw[fill=white] (0,3.5) circle (0.07);
+                \draw (-0.5,3.5) node[above] {$\infty$};
+                \draw[color=red] (-1,{0.75*-1}) -- (3.5,{0.75*3.5});
+                \draw (3.5,{0.75*3.5+0.1}) node[right] {$\nu u$};
+            \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    \caption{\textbf{Constrain Indicator Approximation:} So long as $\lambda > 0$ with $\nu \lessgtr 0$,
+    $\lambda u \leq I_-(u)$, and $\nu u \leq I_0(u)$. This lets us construct the
+    dual in a more tractable manner.}
+    \label{fig:dual-vars}
+\end{figure}
+
+\subsection{Duality Gap: $p^\star - d^\star$}
+
+As we discussed, the linear approximation of our constraints is always an under approximation,
+so if we don't maximize that first our problem is always an under approximation of our primal
+problem. Thus we have the following theorem:
+
+\begin{theorem}[Weak Duality]
+    For \textit{any} optimization problem (even a non-convex one),
+    \[
+        d^\star \leq p^\star.
+    \]
+\end{theorem}
+\begin{proof}
+    See discussion above.
+\end{proof}
+
+From this we can create a handy definition.
+\begin{definition}[Duality Gap]
+    We define the \textbf{duality gap} to be
+    \[
+        p^\star - d^\star \geq 0.
+    \]
+\end{definition}
+As the duality gap tends towards $0$ it means our dual better and better approximates
+our primal problem. In some (any many we will see) cases, $p^\star = d^\star$. In this
+case we say \textbf{strong duality} holds, and solving the dual is equivalent to solving
+the primal problem. In general this is not the case, but if the problem is convex,
+ie. of the form
+\begin{align*}
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & A\xx = \bb
+\end{align*}
+with $f_i$ convex, we usually (but not always) will have strong duality. One sufficient
+but not necessary condition for strong duality is \textbf{Slater's Condition}.
+
+\begin{theorem}[Slater's Condition]
+    If the primal problem is convex as above, and there exists some $\xx\in \mathrm{relint} \;\Dc$
+    such that
+    \[
+        f_i(\xx) < 0 \;\; \forall i \qquad \text{and} \qquad A\xx=\bb,
+    \]
+    then
+    \[
+        d^\star = p^\star.
+    \]
+    When some of the $f_i$ $i=1,\dots,k$ are affine, we can refine Slater's Condition
+    to allow
+    \[
+        f_i(\xx) \leq 0, \quad i=1,\dots,k \qquad f_i(\xx)<0,\quad i=k+1,\dots,m \qquad A\xx=\bb
+    \]
+    to ensure the same strong duality.
+\end{theorem}
+
+\subsection{The Lagrange Dual Function: $g(\lambdab, \nub)$}
 
 \subsection{Finding the Dual}
 
