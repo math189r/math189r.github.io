@@ -1066,7 +1066,7 @@ the last point $i=m$ will hardly give you any information on average about the s
 you are on. Thus, a natural approximation is to select a random subset of size
 $k$ at each iteration and use those $k$ points to compute an approximated gradient
 \[
-    \nabla f_0 \approx \frac{1}{m}\sum_{i=1}^k \nabla f(\xx_i | \theta)
+    \nabla f_0 \approx \frac{1}{k}\sum_{i=1}^k \nabla f(\xx_i | \theta)
 \]
 and use that to compute the update. 
 
@@ -1101,7 +1101,7 @@ is theoretically guarenteed to converge for any $k$ under certain conditions on 
 \subsection{Newton's Method}
 
 Here we introduce a method that is \textit{super fast} but probably won't scale
-to problems with more than a couple dozen thousand examples depending on your
+to problems with more than a couple thousand variables depending on your
 problem structure. Effectively Newton's Method does the following logic:
 \begin{enumerate}
     \item We want to minimize a twice-differentiable function $f : \RR^n \mapsto \RR$. We have an
@@ -1176,7 +1176,7 @@ that bound. See Boys \& Vandenberghe for a proof of this bound.
 
 The idea of ``duality'', forming a complementary problem that maintains
 all of the information of your problem, is found all over mathematics.
-In optimization as a whole, and convex optimization specifically, optimization
+In optimization as a whole, and convex optimization specifically, duality
 is central. First we will investigate an intuitive representation of any
 constrained convex optimization problem which will then lead us directly to
 Lagrange Duality before investigating the implications of this.
@@ -1338,19 +1338,181 @@ but not necessary condition for strong duality is \textbf{Slater's Condition}.
 
 \subsection{The Lagrange Dual Function: $g(\lambdab, \nub)$}
 
-\subsection{Finding the Dual}
+Looking at the dual problem
+\[
+    \sup_{\nu; \lambda \succeq 0}\inf_\xx L(\xx, \lambdab, \nub),
+\]
+we can define the Lagrange Dual function
+\[
+    g(\lambdab, \nub) = \inf_\xx L(\xx, \lambdab, \nub).
+\]
+Then our problem becomes a simple maximization
+\begin{align*}
+    \text{maximize: } & g(\lambdab, \nub)\\
+    \text{subj. to: } & \lambdab \succeq 0\\
+\end{align*}
+
+\begin{example}
+    Consider the problem
+    \begin{align*}
+        \text{minimize: } & x^2\\
+        \text{subj. to: } & x \geq 1
+    \end{align*}
+    Obviously this has a solution of $x^\star = 1$ with
+    $p^\star = 1^2=1$. Nevertheless we will solve this analytically.
+    Constructing the Lagrangian we see
+    \[
+        L(x,\lambda) = x^2 + \lambda(1-x)
+    \]
+    Now finding the dual function $g(\lambda) = \inf_x L(x,\lambda)$ we know at the minimum
+    the derivative
+    \[
+        \frac{\partial L}{\partial x} = 2x - \lambda = 0,
+    \]
+    so
+    \[
+        x^\star = \frac{1}{2}\lambda.
+    \]
+    Plugging this back into our Lagrangian we have
+    \begin{align*}
+        g(\lambda) &= L(x^\star, \lambda)\\
+        &= \frac{1}{4}\lambda^2 + \lambda(1- \frac{1}{2}\lambda)\\
+        &= -\frac{1}{4}\lambda^2 + \lambda = \lambda(1 - \frac{1}{4}\lambda).
+    \end{align*}
+    Thus $g(\lambda)$ is a concave quadratic with roots at $0$ and $4$. By
+    symmetry, this will have a maximum at $\lambda^\star = 2$. This implies that
+    \[
+        x^\star = \frac{1}{2}\lambda^\star = 1,
+    \]
+    as desired, with $p^\star = 1$ and $d^\star = g(\lambda^\star) =
+    2(1-\frac{1}{2}) = 1$, so we maintain strong duality.
+\end{example}
+
+\subsection{Making Dual Constraints Explicit}
+
+A lot of the time, like when we will see Support Vector Machines, we will want
+to find the dual representation of our problem, with constraints. This is
+done by taking our primal, finding the dual function, and then determining
+a subset of the domain where your problem will have an infinite objective
+and just setting a constraint such that that can never happen.\\
+
+This will make much more sense with the following example.
 
 \subsubsection{The Dual of The Linear Program}
 
-\subsection{Solving Problems Using Duality}
+Consider the standard linear program:
 
-\subsubsection{Minimize a Quadratic Under Quadratic Constraints}
+\begin{align*}
+    \text{minimize: } & \cc^\T\xx\\
+    \text{subj. to: } & A\xx = \bb\\
+                      & \xx \succeq 0
+\end{align*}
 
-\subsection{Complementary Slackness of Duality}
-
-\subsubsection{Solving The Dual Linear Program via a Primal Solution}
+The Lagrangian then becomes
+\[
+    L(\xx,\lambdab,\nub) = \cc^\T\xx - \lambdab^\T\xx + (A\xx - \bb)^\T\nub = \xx^\T(\cc - \lambdab + A^\T\nub) - \bb^\T\nub.
+\]
+Now to find the dual function $g(\lambdab, \nub) = \inf_\xx L(\xx,\lambdab,\nub)$, note that
+we can arbitrarily shrink the Lagrangian unless $A^\T\nub - \lambdab + c = 0$. Thus
+\[
+    g(\lambdab, \nub) = \begin{cases}
+        -\bb^\T\nub & \text{if $A^\T\nub - \lambdab + c = 0$}\\
+        -\infty     & \text{otherwise}
+    \end{cases}
+\]
+and then the dual problem
+\[
+    \sup_{\lambda\succeq 0; \nu} g(\lambdab, \nub)
+\]
+becomes, letting $\nub := -\nub$
+\begin{align*}
+    \text{maximize: } & \bb^\T\nub\\
+    \text{subj. to: } & A^\T\nub \preceq \cc\\
+\end{align*}
+because the $-\lambda$ is a slack variable. Note that this is also a linear
+program.
 
 \subsection{The KKT (Karush-Kuhn-Tucker) Conditions}
 
+There are certain conditions that hold, at optimality, for
+all (non-convex) problems. These are known as the KKT (Karush-Kuhn-Tucker)
+Conditions for Non-convex Problems. Suppose we have a problem
+of the form
+
+\begin{align*}
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) \leq 0, \quad i=1,\dots,m\\
+                      & h_i(\xx) = 0, \quad i=1,\dots,p
+\end{align*}
+
+then at dual optimality, for the Lagrangian
+\[
+    L(\xx, \lambdab^\star, \nub^\star) = f_0(\xx) + \sum_{i=1}^m \lambdab_i^\star f_i(\xx) + \sum_{i=1}^p \nub_i^\star h_i(\xx),
+\]
+it follows that $\xx^\star$ minimizes $L(\xx,\lambdab^\star,\nub^\star)$, so
+the gradient must vanish:
+\[
+    \nabla f_0(\xx^\star) + \sum_{i=1}^m \lambdab_i^\star \nabla f_i(\xx^\star) + \sum_{i=1}^p \nub_i^\star \nabla h_i(\xx^\star) = 0
+\]
+Therefore, at optimality we have
+\begin{align*}
+    f_i(\xx^\star) &\leq 0\\
+    h_i(\xx^\star) & = 0\\
+    \lambdab^\star \succeq 0\\
+    \lambdab_i^\star f_i(\xx^\star) = 0\\
+    \nabla L(\xx, \lambdab, \nub) = 0.
+\end{align*}
+These are the non-convex KKT conditions.
+
+\subsection{The KKT Conditions for Convex Problems}
+
+Suppose our primal problem is convex, where $\tilde \xx$, $\tilde\lambdab$,
+and $\tilde\nub$ satisfy all KKT conditions listed above. Then $\tilde\xx$
+and $(\tilde\lambdab, \tilde\nub)$ are primal and dual optimal, with \textit{zero duality gap}.
+To see this we first note that the first two conditions only
+assert primal feasibility. Since $\tilde\lambdab_i \geq 0$, we know $L(x,\tilde\lambdab,
+\tilde\nub)$ is convex in $\xx$, so it follows that $\tilde\xx$ minimizes $L$
+over $\xx$. Therefore
+\begin{align*}
+    g(\tilde\lambdab, \tilde\nub) &= L(\tilde\xx, \tilde\lambdab, \tilde\nub)\\
+    &= f_0(\tilde\xx) + \sum_{i=1}^m \tilde\lambdab_i f_i(\tilde\xx) + \sum_{i=1}^p \tilde\nub_i h_i(\tilde\xx)\\
+    &= f_0(\tilde\xx),
+\end{align*}
+because $h_i(\tilde\xx) = 0$ and $\tilde\lambdab_i f_i(\tilde\xx) = 0$. Thus any convex
+optimization problem with a once differentiable objective, any set of primal/dual variables
+that satisfy the KKT conditions are primal and dual optimal, and have zero duality gap.\\
+
+Further, if a problem satisfies Slater's Condition, then the KKT conditions provide necessary
+and sufficient conditions for optimality.
+
+\begin{example}[Equality Constrained Convex Quadratic Minimization]
+    Consider the task of solving the problem
+    \begin{align*}
+        \text{minimize: } & \frac{1}{2}\xx^\T P\xx + \qq^\T\xx + \rr\\
+        \text{subj. to: } & A\xx = \bb\\
+    \end{align*}
+    From the KKT conditions we know at optimality
+    \[
+        A\xx^\star = \bb
+    \]
+    to ensure primal feasibility.
+    Further, we can see that this has a Lagrangian
+    \[
+        L(\xx, \nub) = \frac{1}{2}\xx^\T P\xx + \qq^\T\xx + \rr + (A\xx - \bb)^\T\nub.
+    \]
+    From the KKT conditions, again, we know that $\nabla L = 0$
+    at optimality, so
+    \[
+        \nabla L(\xx^\star, \nub^\star) = P\xx^\star + \qq + A^\T\nub^\star = 0.
+    \]
+    Thus we have two equations in two unknowns, and can solve this
+    system analytically in the block form
+    \[
+        \m{P & A^\T \\ A & 0} \m{\xx^\star \\ \nub^\star} = \m{-\qq \\ \bb}
+    \]
+    This is known as the KKT system, and is very heavily used in
+    equality constrained convex optimization using Newton's Method
+    (think the normal Hessian system but you assert linear feasibility).
+\end{example}
 
 \end{document}
