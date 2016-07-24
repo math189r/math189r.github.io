@@ -22,13 +22,18 @@ and the rest of the problems you complete are due on September 19. Feel
 free to work with other students, but make sure you write up the homework
 and code on your own (no copying homework \textit{or} code; no pair programming).
 Feel free to ask students or instructors for help debugging code or whatever else,
-though. Problems are in no specific order.\\[1em]
+though.
+When implementing algorithms you may not use any library (such as \texttt{sklearn})
+that already implements the algorithms but you may use any other library for
+data cleaning and numeric purposes (\texttt{numpy} or \texttt{pandas}). Use common
+sense.
+Problems are in no specific order.\\[1em]
 
 
-\textbf{1}. Download the data at 
-\url{https://math189r.github.io/data/online_news_popularity/online_news_popularity.csv}
+\textbf{1} (\textbf{regression}). Download the data at 
+\url{https://math189r.github.io/hw/data/online_news_popularity/online_news_popularity.csv}
 and the info file at
-\url{https://math189r.github.io/data/online_news_popularity/online_news_popularity.txt}.
+\url{https://math189r.github.io/hw/data/online_news_popularity/online_news_popularity.txt}.
 Read the info file. Split the csv file into a training and test set with
 the first two thirds of the data in the training set and the rest for testing.
 Of the testing data, split the first quarter into a `validation set' (used
@@ -49,15 +54,16 @@ parameters.
             RMSE = \sqrt{\frac{1}{n}\sum_i (y_i - \hat y_i)^2}
         \]
         on the validation set, and choose that
-        value of $k$ as optimal. What is the accuracy on the test set?
+        value of $k$ as optimal. What is the RMSE on the test set?
     \item (\textbf{exploration}) Find a new distance metric that performs
         better on this dataset (using the same process as above for choosing
-        $k$). What is the new metric you used (as well as others you tried)
-        and what is your new accuracy?
+        $k$). What is the new metric you used (as well as others you tried that
+        may have not worked better)
+        and what is your new RMSE? Why should this metric work better?
     \item (\textbf{implementation}) Attempt the same problem using ridge
         regression. Find the optimal regularization parameter $\lambda$
-        from the validation set. What is the accuracy on the validation set
-        for all values of $\lambda$ you tried and what is the final accuracy
+        from the validation set. What is the RMSE on the validation set
+        for all values of $\lambda$ you tried and what is the final RMSE
         on the test set with the optimal $\lambda^\star$?
     \item (\textbf{math}) See section 7.6 of Murphy (you should have read this
         already) on Bayesian Linear Regression. Prove/derive everything in 7.6.1
