@@ -36,55 +36,38 @@ and the info file at
 \url{https://math189r.github.io/hw/data/online_news_popularity/online_news_popularity.txt}.
 Read the info file. Split the csv file into a training and test set with
 the first two thirds of the data in the training set and the rest for testing.
-Of the testing data, split the first quarter into a `validation set' (used
+Of the testing data, split the first half into a `validation set' (used
 to optimize hyperparameters while leaving your testing data pristine) and
-the remaining 3/4 as your test set.
+the remaining half as your test set.
 We will use this data for the remainder of the problem. The goal of this data
-is to predict the number of shares a news article will have given the other
-parameters.
+is to predict the \textbf{log} number of shares a news article will have given the other
+features.
 \begin{enumerate}[(a)]
-    \item (\textbf{implementation}) A K-Nearest Neighbor classifier/regressor
-        takes the $k$ `closest' points to a test point $x$ according to some
-        distance metric (often the L-2 norm) and predicts that the label/value
-        at $x$ to be the mean of the labels of the $k$ closest points. Using
-        the Euclidean distance as your metric, write a KNN classifier in the
-        language of your choosing. Try a bunch of different values of $k$ between
-        1 and 100, record the root mean squared error (RMSE)
+    \item (\textbf{math}) Find a closed form solution $\xx^\star$ to the ridge regression
+        problem:
         \[
-            RMSE = \sqrt{\frac{1}{n}\sum_i (y_i - \hat y_i)^2}
+            \text{minimize: } ||A\xx - \bb||_2^2 + ||\Gamma\xx||_2^2.
         \]
-        on the validation set, and choose that
-        value of $k$ as optimal. What is the RMSE on the test set?
-    \item (\textbf{exploration}) Find a new distance metric that performs
-        better on this dataset (using the same process as above for choosing
-        $k$). What is the new metric you used (as well as others you tried that
-        may have not worked better)
-        and what is your new RMSE? Why should this metric work better?
-    \item (\textbf{implementation}) Attempt the same problem using ridge
-        regression. Find the optimal regularization parameter $\lambda$
-        from the validation set. What is the RMSE on the validation set
-        for all values of $\lambda$ you tried and what is the final RMSE
-        on the test set with the optimal $\lambda^\star$?
-    \item (\textbf{math}) See section 7.6 of Murphy (you should have read this
-        already) on Bayesian Linear Regression. Prove/derive everything in 7.6.1
-        and 7.6.2:
-        \begin{enumerate}
-            \item $\PP(\yy | X,\ww, \sigma^2) \propto \exp \bigl(-\frac{1}{2\sigma^2}||\yy - \overline \yy \1_N - X\ww||_2^2\bigr)$\\
-            \item $\PP(\xx|X,\yy,\sigma^2) \propto \Nc(\ww|\ww_0,V_0)\Nc(\yy|X\ww,\sigma^2 I_N) = \Nc(\ww|\ww_N, V_N)$ where
-                \begin{align*}
-                    \ww_N &= V_n V_0^{-1}\ww_0 + \frac{1}{\sigma^2}V_N X^\T \yy\\
-                    V_N^{-1} &= V_0^{-1} + \frac{1}{\sigma^2}X^\T X\text{, and}\\
-                    V_N &= \sigma^2(\sigma^2 V_0^{-1} + X^\T X)^{-1}.
-                \end{align*}
-            \item Show that when we let $\ww_0=\0$ and $V_0=\tau^2 I$, the posterior
-                mean becomes the ridge regression estimate with
-                $\lambda = \frac{\sigma^2}{\tau^2}$.
-            \item Show \begin{align*}
-                \PP(y|\xx,\Dc,\sigma^2) &= \int\Nc(y|\xx^\T\ww, \sigma^2)\Nc(\ww,\ww_N,V_N)d\ww\\
-                    &= \Nc(y|\xx_N^\T\xx, \sigma_N(\xx))\\
-                    \sigma_N^2(\xx) &= \sigma^2 + \xx^\T V_N\xx.
-                \end{align*}
-        \end{enumerate}
+    \item (\textbf{implementation}) Attempt to predict the $\log\text{shares}$ using ridge
+        regression from the previous problem solution. Make sure you include a bias
+        term and \textit{don't regularize the bias term}.
+        Find the optimal regularization parameter $\lambda$
+        from the validation set. Plot both $\lambda$ versus the validation RMSE (you should have
+        tried at least 150 parameter settings randomly chosen between 0.0 and 150.0 because
+        the dataset is small)
+        and $\lambda$ versus $||\thetab^\star||_2$ where $\thetab$ is your weight vector.
+        What is the final RMSE on the test set with the optimal $\lambda^\star$?
+    \item (\textbf{math}) Consider regularized linear regression where we pull the
+        basis term out of the feature vectors. That is, instead of computing $\hat\yy
+        = \thetab^\T\xx$ with $\xx_0 = 1$, we compute $\hat\yy = \thetab^\T\xx + b$.
+        This corresponds to solving the optimization problem
+        \[
+            \text{minimize: } ||A\xx + b\1 - \yy||_2^2 + ||\Gamma\xx||_2^2.
+        \]
+        Solve for the optimal $\xx^\star$ explicitly. Use this close form to compute the
+        bias term for the previous problem (with the same regularization strategy). Make
+        sure it is the same.
+    \item (\textbf{implementation}) Use the solution
 \end{enumerate}
 \clearpage
 
