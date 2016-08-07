@@ -1,16 +1,18 @@
 % Theorems
 \usepackage{amsthm}
 \renewcommand\qedsymbol{$\blacksquare$}
+\makeatletter
+\@ifclassloaded{article}{
+    \newtheorem{definition}{Definition}[section]
+    \newtheorem{example}{Example}[section]
+    \newtheorem{theorem}{Theorem}[section]
+    \newtheorem{corollary}{Corollary}[theorem]
+    \newtheorem{lemma}{Lemma}[theorem]
+}{
+}
+\makeatother
 
-\newtheorem{definition}{Definition}[section]
-\newtheorem{example}{Example}[section]
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{lemma}[theorem]{Lemma}
-
-
-% Linear Algebra %
-
+% Random Stuff
 \setlength\unitlength{1mm}
 
 \newcommand{\insertfig}[3]{
@@ -23,7 +25,6 @@
 \begin{center}
 \leavevmode \centerline{\resizebox{#4\textwidth}{!}{\input
 #1.pstex_t}}
-%\vspace*{-0.2in}
 \caption{#2} \label{#3}
 \end{center}
 \end{figure}}
@@ -33,8 +34,8 @@
 \newcommand\norm[1]{\left\lVert#1\right\rVert}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
-% bb font symbols
 
+% bb font symbols
 \newfont{\bbb}{msbm10 scaled 700}
 \newcommand{\CCC}{\mbox{\bbb C}}
 
@@ -52,7 +53,6 @@
 \newcommand{\KK}{\mbox{\bbf K}}
 
 % Vectors
-
 \renewcommand{\aa}{{\bf a}}
 \newcommand{\bb}{{\bf b}}
 \newcommand{\cc}{{\bf c}}
@@ -83,7 +83,6 @@
 \newcommand{\1}{{\bf 1}}
 
 % Matrices
-
 \newcommand{\Ab}{{\bf A}}
 \newcommand{\Bb}{{\bf B}}
 \newcommand{\Cb}{{\bf C}}
@@ -112,7 +111,6 @@
 \newcommand{\Zb}{{\bf Z}}
 
 % Calligraphic
-
 \newcommand{\Ac}{{\cal A}}
 \newcommand{\Bc}{{\cal B}}
 \newcommand{\Cc}{{\cal C}}
@@ -141,7 +139,6 @@
 \newcommand{\Zc}{{\cal Z}}
 
 % Bold greek letters
-
 \newcommand{\alphab}{\hbox{\boldmath$\alpha$}}
 \newcommand{\betab}{\hbox{\boldmath$\beta$}}
 \newcommand{\gammab}{\hbox{\boldmath$\gamma$}}
@@ -173,9 +170,7 @@
 \newcommand{\Omegab}{\hbox{\boldmath$\Omega$}}
 \newcommand{\Xib}{\hbox{\boldmath$\Xi$}}
 
-
 % mixed symbols
-
 \newcommand{\sinc}{{\hbox{sinc}}}
 \newcommand{\diag}{{\hbox{diag}}}
 \renewcommand{\det}{{\hbox{det}}}

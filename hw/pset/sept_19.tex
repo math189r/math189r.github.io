@@ -67,8 +67,16 @@ features.
         Solve for the optimal $\xx^\star$ explicitly. Use this close form to compute the
         bias term for the previous problem (with the same regularization strategy). Make
         sure it is the same.
-    \item (\textbf{implementation}) Use the solution
+    \item (\textbf{implementation}) We can also compute the solution to the least squares
+        problem using gradient descent. Consider the same bias-relocated objective
+        \[
+            \text{minimize: } f = ||A\xx + b\1 - \yy||_2^2 + ||\Gamma\xx||_2^2.
+        \]
+        Compute the gradients and 
 \end{enumerate}
+
+\textbf{2} (\textbf{iterative optimization}) This problem will use data from
+\url{https://math189r.github.io/hw/data/bike-sharing/hour.csv}
 \clearpage
 
 

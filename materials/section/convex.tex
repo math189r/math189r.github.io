@@ -537,6 +537,26 @@ convex functions from other convex functions. There are \textit{many}
 more properties than those shown here. See \textit{Convex Optimization}
 by Boyd and Vandenberghe for many others.
 
+\begin{theorem}[Affine Composition]
+    Given a convex $f : \RR^m \mapsto \RR$, any matrix $A\in\RR^{m \times n}$, $\xx\in\RR^n$,
+    and $\bb\in\RR^m$,
+    \[
+        g(\xx) = f(A\xx + \bb)
+    \]
+    is convex. The same result holds for concave functions, as you can see
+    from the proof.
+\end{theorem}
+\begin{proof}
+    \[
+        \nabla^2g = A^\T \nabla^2 f(A\xx + \bb) A.
+    \]
+    Then, for any $\zz\in\RR^n$,
+    \[
+        \zz^\T \nabla^2g \zz = \zz^\T A^\T \nabla^2 f(A\xx + \bb) A \zz = (A\zz)^\T\nabla^2 f(A\xx + \bb) (A \zz) \geq 0
+    \]
+    by the convexity assumption, so $g$ is convex.
+\end{proof}
+
 \begin{theorem}[Non-Negative Weighted Sum]
     The function $F : C \mapsto \RR$ where $C$ is a convex set, $f_i : C\mapsto\RR$ is a convex
     function, $w_i \geq 0$ and
@@ -667,7 +687,7 @@ is equivalent to the original. This should be clear. If $x$ solves the
 original problem, then $z = \phi^{-1}(x)$ solves the transformed problem.
 The converse also holds.
 
-\subsubsection{Transformation of Objective and Constrain Functions}
+\subsubsection{Transformation of Objective and Constraint Functions}
 
 Suppose $\psi_0 : \RR \mapsto \RR$ is monotonically increasing, $\phi_1,\dots,
 \psi_m : \RR \mapsto \RR$ satisfy $\phi_i(u) \leq 0$ if and only if $u \leq 0$,
@@ -774,7 +794,7 @@ research and graph algorithms. A linear program is a convex
 optimization problem of the form
 \begin{align*}
     \text{minimize: } & \cc^\T\xx\\
-    \text{subj. to: } & G\xx \leq \hh,\\
+    \text{subj. to: } & G\xx \preceq \hh,\\
                       & A\xx = \bb
 \end{align*}
 where $G\in\RR^{m\times n}$ and $A\in\RR^{p\times n}$. Note that
