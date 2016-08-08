@@ -31,7 +31,7 @@
     \frametitle{Convex Optimization}
     \begin{enumerate}
         \item Core behind techniques in machine learning, signal processing, operations research, etc.
-        \item Can be \textut{very} applied or very theoretical
+        \item Can be \textit{very} applied or very theoretical
         \item If you need more resources check out \textit{Convex Optimization} by Boyd and
             Vandenberghe\footnote{\url{http://stanford.edu/~boyd/cvxbook/}}.
     \end{enumerate}
@@ -536,7 +536,7 @@
     \]
     At optimality we have
     \[
-        \nabla \bigtilde f = \nabla f + \nabla^2 f (\xx - \xx_0) = 0,
+        \nabla \widetilde f = \nabla f + \nabla^2 f (\xx - \xx_0) = 0,
     \]
     so
     \[
@@ -590,13 +590,14 @@
         \[
             \xx_{t+1} = \xx_t - \nabla^2 f^{-1} \nabla f.
         \]
-        If we have $g(\yy) = f(A\yy)$, then as before we have
+        If we have $g(\yy) = f(A\yy) = f(\xx)$, then as before we have
         \[
-            \nabla g = A^T\nabla f(A\yy) \qquad\text{and}\qquad \nabla^2 g = A^T \nabla^2 f(A\yy) A
+            \nabla g = A^T\nabla f(\xx) \qquad\text{and}\qquad \nabla^2 g = A^T \nabla^2 f(\xx) A
+
         \]
         and then
         \begin{align*}
-            \yy_{t+1} &= A^{-1}\xx_t - (A^T \nabla^2 f(A\xx_t) A)^{-1} A^T\nabla f(\xx_t)\\
+            \yy_{t+1} &= A^{-1}\xx_t - (A^T \nabla^2 f(\xx_t) A)^{-1} A^T\nabla f(\xx_t)\\
             &= A^{-1}\xx_t - A^{-1} \nabla^2 f(\xx_t)^{-1} A^{-\T} A^T\nabla f(\xx_t)\\
             &= A^{-1}\left[\xx_t - \nabla^2 f(\xx_t)^{-1}\nabla f(\xx_t)\right]\\
             A\yy_{t+1} &= \xx_{t+1}.
