@@ -43,20 +43,31 @@
     </thead>
     <tbody>
 
+        <tr>
+            <td></td>
+            <td></td>
+            <td>
+                <a href="materials/section/linear.pdf">Linear Algebra and Matrix Calculus Review</a></br></br>
+                <a href="materials/section/convex.pdf">Convex Optimization</br>Overview I</a>
+            </td>
+        </tr>
+
         <!-- Supervised Learning -->
         <tr>
             <td><b>Supervised Learning</b></br><a href="">Sept. 5</a></td>
             <td>
                 Introduction to Big Data. Linear Regression. Normal
-                Equations and Optimization Techniques.
-                Robust Linear Regression. Ridge Regression.
-                Big Data as a Regularizer. </br></br>
+                Equations and Optimization Techniques. Solving the Normal
+                Equations efficiently (Cholesky Decomposition).
+                Various forms of Linear regression.
+                 </br></br>
 
                 <b>Read:</b> Murphy 1.{all} (DEFINITELY READ BEFORE FIRST CLASS)</br>
                 <b>Read:</b> Murphy, 7.{1,...,5}
             </td>
             <td>
-                <a href="materials/section/linear.pdf">Linear Algebra and Matrix Calculus Review</a>
+                <a href="http://cs229.stanford.edu/section/cs229-prob.pdf">Probability Review</a></br>
+                (also Murphy 2.{all} is a great resource)
             </td>
         </tr>
         <tr>
@@ -70,39 +81,48 @@
                 <b>Read:</b> Murphy, 8.{1,2,3,5} \ 8.{3.4,3.5}, 9.{1,2.2,2.4,3}
             </td>
             <td>
-                <a href="http://cs229.stanford.edu/section/cs229-prob.pdf">Probability Review</a></br>
-                (also Murphy 2.{all} is a great resource)
+                <a href="materials/section/convex.pdf">Convex Optimization</br>Overview II</a>
             </td>
         </tr>
         <tr>
             <td><a href="">Sept. 19</a></td>
             <td>
                 Generalized Linear Models continued.
-                Poisson Regression. Softmax Regression.</br></br>
+                Poisson Regression. Softmax Regression.
+                Covariance matrix; Multivariate Gaussian
+                Distribution. Marginalized Gaussian and the Schur
+                Complement.
+                Regularization continued. Big Data as
+                a Regularizer.
+                </br></br>
 
                 <b>Read:</b> Murphy 9.7 (short)</br>
                 <b>Due:</b> <a href="homework/sept_19.pdf">Homework 1</a></br>
             </td>
             <td>
-                <a href="materials/section/convex.pdf">Convex Optimization</br>Overview I</a>
             </td>
         </tr>
         <tr>
             <td><a href="">Sept. 26</a></td>
             <td>
+                Dimensionality Reduction; Spectral Decomposition and
+                Principal Component Analysis.
+                </br></br>
+
                 Generative Learning Algorithms.
-                Gaussian Discriminant Analysis. Naive Bayes.</br></br>
+                Gaussian Discriminant Analysis.
+                </br></br>
 
                 <b>Read:</b> Murphy 4.{1,2,3,4} \ 4.{3.3}</br></br>
                 <b>Due:</b> Final Project Proposal
             </td>
             <td>
-                <a href="materials/section/convex.pdf">Convex Optimization</br>Overview II</a>
             </td>
         </tr>
         <tr>
             <td><a href="">Oct.  3</a></td>
             <td>
+                Naive Bayes.
                 Support Vector Machines. Kernels.</br></br>
 
                 <b>Read:</b> Murphy 14.{1,2,3,4} \ 14.{4.4}</br>
@@ -138,7 +158,7 @@
         <tr>
             <td><a href="">Oct.  24</a></td>
             <td>
-                Principal Component Analysis (PCA).
+                Principal Component Analysis (PCA) Review.
                 Kernel PCA. One Class Support Vector
                 Machines. </br></br>
 
@@ -184,21 +204,39 @@
             </td>
         </tr>
 
-        <!-- Bayesian Learning -->
+        <!-- Graph Methods -->
         <tr>
-            <td><b>Bayesian Learning</b></br><a href="">Nov.  14</a></td>
+            <td><b>Graph Methods</b></br><a href="">Nov.  14</a></td>
             <td>
-                Formal Introduction to Bayesian Reasoning.
-                Bayesian Linear Regression (which we've already seen).
-                Bayesian Logistic Regression.</br></br>
+                Graphs. Graph representations as data. The Laplacian
+                and usage of Spectral (Eigenvalue-Eigenvector) information.
+                </br></br>
+                Directed Graphical Models (Bayesian Networks). Conditional
+                Independence. Naive Bayes
+                as a Graphical Model. Plate Notation. 
+                </br></br>
 
-                <b>Read:</b> Murphy 5.{1,2,3.0,3.2} 7.6, 8.4</br>
+                <b>Read:</b> Murphy 10.{1,2,3,4,5,6}</br>
                 <b>Due:</b> <a href="homework/nov_14.pdf">Homework 4</a>
             </td>
             <td></td>
         </tr>
+
+        <!-- Bayesian Learning -->
         <tr>
-            <td><a href="">Nov.  21</a></td>
+            <td><b>Bayesian Learning</b></br><a href="">Nov.  21</a></td>
+            <td>
+                Recap of Bayesian Reasoning.
+                Bayesian Linear Regression (which we've already seen).
+                Bayesian Logistic Regression. Intractable Integrals and
+                Motivation for Approximate Methods.</br></br>
+
+                <b>Read:</b> Murphy 5.{1,2,3.0,3.2} 7.6, 8.4</br>
+            </td>
+            <td>Thanksgiving</td>
+        </tr>
+        <tr>
+            <td><a href="">Nov.  28</a></td>
             <td>
                 Monte-Carlo Methods. Rejection Sampling.
                 Importance Sampling. Intro to Markov-Chain
@@ -209,18 +247,6 @@
                 <b>Read:</b> Murphy 23.{1,2,3,4} \ 23.4.3,
                                     24.{1,2.(1,2,3,4), 3,4} \ 24.{3.7}</br>
                 <b>Optional Read:</b> Murphy 24.{5,6}
-            </td>
-            <td>Thanksgiving</td>
-        </tr>
-        <tr>
-            <td><a href="">Nov.  28</a></td>
-            <td>
-                Latent Dirichlet Allocation. Sampling solutions
-                for Bayesian linear and logistic regression. Gaussian
-                Processes intro.
-                </br></br>
-
-                <b>Read:</b> Murphy 27.{1,2,3}, 15.{1,2}</br>
                 <b>Due:</b> <a href="homework/nov_28.pdf">Homework 5</a>
             </td>
             </td>
@@ -234,10 +260,12 @@
         <tr>
             <td><a href="">Dec.  5</a></td>
             <td>
-                Nonparametric Models. Gaussian Processes continued. 
+                Latent Dirichlet Allocation.
+                Nonparametric Models. K-Nearest-Neighbors as
+                a Nonparametric Model. Gaussian Processes. 
                 Dirichlet Processes and the infinite mixture of Gaussians.</br></br>
             
-                <b>Read:</b> Murphy 15.{3,4}, 25.2</br>
+                <b>Read:</b> Murphy 15.{1,2,3,4}, 25.2, 27.{1,2,3}</br>
                 <b>Read:</b> <a href="http://jmlr.org/proceedings/papers/v28/wilson13.pdf">Gaussian Process Kernels for Pattern Discovery and Extrapolation</a></br>
                 <b>Due:</b> Final Project!
             </td>
