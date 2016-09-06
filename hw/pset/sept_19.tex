@@ -52,6 +52,7 @@ features.
         \[
             \argmin \frac{1}{N}\sum_{i=1}^N (y_i - (w_0 + \ww^\T\xx_i))^2 + \lambda ||\ww||_2^2
         \]
+        with $\lambda = \sigma^2 / \tau^2$.
     \item (\textbf{math}) Find a closed form solution $\xx^\star$ to the ridge regression
         problem:
         \[
@@ -127,8 +128,9 @@ where \texttt{pix-ij} is the pixel in the \texttt{ith} row and \texttt{jth} colu
 \textbf{3} (\textbf{Murphy 2.11}) Derive the normalization constant ($Z$) for a one dimensional
 zero-mean Gaussian
 \[
-    \PP(x; \sigma^2) = \frac{1}{Z}\exp\left(-\frac{x^2}{2\sigma^2}\right).
+    \PP(x; \sigma^2) = \frac{1}{Z}\exp\left(-\frac{x^2}{2\sigma^2}\right)
 \]
+such that $\PP(x; \sigma^2)$ becomes a valid density.
 
 \textbf{4} (\textbf{Murphy 2.15}) Let $\PP_{emp}(x)$ be the empirical distribution and let
 $q(x|\thetab)$ be some model. Show that $\argmin_q \KL(\PP_{emp} || q)$ is obtained by
@@ -150,6 +152,8 @@ that
 \[
     \PP(\theta; a,b) = \frac{1}{B(a,b)} \theta^{a-1}(1-\theta)^{b-1} = \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} \theta^{a-1}(1-\theta)^{b-1}
 \]
+where $B(a,b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)$ is the Beta function
+and $\Gamma(x)$ is the Gamma function.
 Derive the mean, mode, and variance of $\theta$.
 
 \textbf{7} (\textbf{Murphy 8.3}) Gradient and Hessian of the log-likelihood for
