@@ -125,12 +125,23 @@ where \texttt{pix-ij} is the pixel in the \texttt{ith} row and \texttt{jth} colu
         norm as your metric. Plot and report the same results as part (b).
 \end{enumerate}
 
-\textbf{3} (\textbf{Murphy 2.11}) Derive the normalization constant ($Z$) for a one dimensional
-zero-mean Gaussian
-\[
-    \PP(x; \sigma^2) = \frac{1}{Z}\exp\left(-\frac{x^2}{2\sigma^2}\right)
-\]
-such that $\PP(x; \sigma^2)$ becomes a valid density.
+\textbf{3} (\textbf{Murphy 2.11} and \textbf{2.16})
+\begin{enumerate}[(a)]
+    \item Derive the normalization constant ($Z$) for a one dimensional
+        zero-mean Gaussian
+        \[
+            \PP(x; \sigma^2) = \frac{1}{Z}\exp\left(-\frac{x^2}{2\sigma^2}\right)
+        \]
+        such that $\PP(x; \sigma^2)$ becomes a valid density.
+    \item Suppose $\theta \sim \text{Beta}(a,b)$ such
+        that
+        \[
+            \PP(\theta; a,b) = \frac{1}{B(a,b)} \theta^{a-1}(1-\theta)^{b-1} = \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} \theta^{a-1}(1-\theta)^{b-1}
+        \]
+        where $B(a,b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)$ is the Beta function
+        and $\Gamma(x)$ is the Gamma function.
+        Derive the mean, mode, and variance of $\theta$.
+\end{enumerate}
 
 \textbf{4} (\textbf{Murphy 2.15}) Let $\PP_{emp}(x)$ be the empirical distribution and let
 $q(x|\thetab)$ be some model. Show that $\argmin_q \KL(\PP_{emp} || q)$ is obtained by
@@ -147,14 +158,18 @@ Also show that
     \cov[\yy] = \cov[A\xx + \bb] = A \cov[\xx] A^\T = A\Sigmab A^\T.
 \]
 
-\textbf{6} (\textbf{Murphy 2.16}) Suppose $\theta \sim \text{Beta}(a,b)$ such
-that
-\[
-    \PP(\theta; a,b) = \frac{1}{B(a,b)} \theta^{a-1}(1-\theta)^{b-1} = \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} \theta^{a-1}(1-\theta)^{b-1}
-\]
-where $B(a,b) = \Gamma(a)\Gamma(b)/\Gamma(a+b)$ is the Beta function
-and $\Gamma(x)$ is the Gamma function.
-Derive the mean, mode, and variance of $\theta$.
+\textbf{6} Given the dataset $\Dc = \{(x,y)\} = \{(0,1), (2,3), (3,6), (4,8)\}$
+\begin{enumerate}[(a)]
+    \item Find the least squares estimate $y = \thetab^\T\xx$ by hand using
+        Cramer's Rule.
+    \item Use the normal equations to find the same solution and verify it
+        is the same as part (a).
+    \item Plot the data and the optimal linear fit you found.
+    \item Find randomly generate 100 points near the line with white Gaussian
+        noise and then compute the least squares estimate (using a computer).
+        Verify that this new line is close to the original and plot the new
+        dataset, the old line, and the new line.
+\end{enumerate}
 
 \textbf{7} (\textbf{Murphy 8.3}) Gradient and Hessian of the log-likelihood for
 logistic regression.
