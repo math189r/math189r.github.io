@@ -1,0 +1,130 @@
+\documentclass[12pt,letterpaper,fleqn]{hmcpset}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\input{../../materials/section/macros.tex}
+
+% info for header block in upper right hand corner
+\name{------}
+\class{Math 189r}
+\assignment{Homework 1}
+\duedate{October 10, 2016}
+
+\begin{document}
+
+There are 6 problems in this set. You need to do 3 problems (due in class on Monday)
+every week for 2 weeks. Note that this means you must eventually complete all problems.
+Feel free to work with other students, but make sure you write up the homework
+and code on your own (no copying homework \textit{or} code; no pair programming).
+Feel free to ask students or instructors for help debugging code or whatever else,
+though.
+When implementing algorithms you may not use any library (such as \texttt{sklearn})
+that already implements the algorithms but you may use any other library for
+data cleaning and numeric purposes (\texttt{numpy} or \texttt{pandas}). Use common
+sense. Problems are in no specific order.\\[1em]
+
+\textbf{1. (Conditioning a Gaussian)} Note that from Murphy page 113. ``Equation 4.69
+is of such importance in this book that we have put a box around it, so you can easily
+find it.'' That equation is important. Read through the proof of the result.
+Suppose we have a distribution over random variables $\xx = (\xx_1, \xx_2)$ that is
+jointly Gaussian with parameters
+\[
+    \mub = \m{\mub_1\\\mub_2}\;\;\; \Sigmab = \m{\Sigmab_{11}&\Sigmab_{12}\\\Sigmab_{21}&\Sigmab_{22}},
+\]
+where
+\[
+    \mub_1 = \m{0\\0}, \;\; \mub_2 = 5, \;\; \Sigmab_{11} = \m{1 & 2\\ 2 & 3}, \;\; \Sigmab_{21}^\T = \Sigmab_{12} = \m{5\\1}, \;\; \Sigmab_{22} = \m{1}.
+\]
+Compute
+\begin{enumerate}[(a)]
+    \item The marginal distribution $p(\xx_1)$. Plot the density in $\RR^2$.
+    \item The marginal distribution $p(\xx_2)$. Plot the density in $\RR^1$.
+    \item The conditional distribution $p(\xx_1 | \xx_2)$
+    \item The conditional distribution $p(\xx_2 | \xx_1)$\\[1em]
+\end{enumerate}
+
+\textbf{2. ($\ell_1$-Regularization)} Consider the $\ell_1$ norm of a vector $\xx\in\RR^n$:
+\[
+    \|\xx\|_1 = \sum_i |\xx_i|.
+\]
+Plot the norm-ball $B_k = \{\xx : \|\xx\|_1 \leq k\}$ for $k=1$. On the same plot, plot
+the Euclidean norm-ball $A_k = \{\xx : \|\xx\|_2 \leq k\}$ for $k=1$ behind the first plot.
+Show that the optimization problem
+\begin{align*}
+    \text{minimize: } & f(\xx)\\
+    \text{subj. to: } & \|\xx\|_p \leq k
+\end{align*}
+is equivalent to
+\begin{align*}
+    \text{minimize: } & f(\xx) + \lambda\|\xx\|_p
+\end{align*}
+(hint: create the Lagrangian). With this knowledge, and the plots given above, argue why
+using $\ell_1$ regularization (adding a $\lambda\|\xx\|_1$ term to the objective) will give
+sparser solutions than using $\ell_2$ regularization for suitably large $\lambda$.\\[1em]
+
+\textbf{3. (Lasso)} Show that placing an equal zero-mean Laplace prior on each element of the weights $\thetab$
+of a model is equivelent to $\ell_1$ regularization in the Maximum-a-Posteriori estimate
+\begin{align*}
+    \text{maximize: } & \PP(\thetab | \Dc) = \frac{\PP(\Dc | \thetab)\PP(\thetab)}{\PP(\Dc)}.
+\end{align*}
+Note the form of the Laplace distribution is
+\[
+    \mathrm{Lap}(x|\mu,b) = \frac{1}{2b}\exp\left(-\frac{|x-\mu|}{b}\right)
+\]
+where $\mu$ is the location parameter and $b>0$ controls the variance. Plot the density
+$\mathrm{Lap}(x|0,1)$ and the standard normal $\Nc(x|0,1)$ and suggest why this would
+lead to sparser solutions than a Gaussian prior on each elements of the weights
+(which correspond to $\ell_2$ regularization).\\[1em]
+
+\textbf{4. (Lasso Feature Selection)} Ignoring undifferentiability at $x=0$, take $\frac{\partial |x|}{\partial x}
+= \mathrm{sign} (x)$. Using this, show that $\nabla \|\xx\|_1 = \mathrm{sign}(\xx)$ where $\mathrm{sign}$ is applied
+elementwise. Derive the gradient of the $\ell_1$ regularized linear regression objective
+\begin{align*}
+    \text{minimize: } & \|A\xx - \bb\|_2^2 + \lambda \|\xx\|_1
+\end{align*}
+Now consider the shares dataset we used in problem 1 of homework 1
+(\url{https://math189r.github.io/hw/data/online_news_popularity/online_news_popularity.txt}).
+Implement a gradient descent based solution of the above optimization problem for this data. Produce
+the convergence plot (objective vs. iterations) for a non-trivial value of $\lambda$.
+In the same figure (and different axes) produce a `regularization path' plot. Detailed
+more in section 13.3.4 of Murphy, a regularization path is a plot of the optimal weight on
+the $y$ axis at a given regularization strength $\lambda$ on the $x$ axis. Armed with this
+plot, provide an ordered list of the top five features in predicting the log-shares of a news
+article from this dataset (with justification). Tip: you can reuse most of your code from
+the first homework.\\[1em]
+
+\textbf{5. (SVD Image Compression)} Load the image of a scary clown at \url{http://i.imgur.com/X017qGH.jpg}
+into a matrix/array. Plot the progression of the 100 largest singular values for the original image
+and a randomly shuffled version of the same image (all on the same plot). In a single figure plot
+a grid of four images: the original image, and a rank $k$ truncated SVD approximation of the original
+image for $k\in\{2,10,20\}$.\\[1em]
+
+\textbf{5. (Murphy 12.5 - Deriving the Residual Error for PCA)} It may be helpful to reference
+section 12.2.2 of Murphy.
+\begin{enumerate}[(a)]
+    \item Prove that
+        \[
+            \left\|\xx_i - \sum_{j=1}^k z_{ij}\vv_j\right\|^2 = \xx_i^\T\xx_i - \sum_{i=1}^k\vv_j^\T \xx_i\xx_i^\T \vv_j.
+        \]
+        Hint: first consider the case when $k=2$. Use the fact that $\vv_i^\T\vv_j$ is 1 if $i=j$ and 0 otherwise.
+        Recall that $z_{ij} = \xx_i^\T\vv_j$.
+
+    \item Now show that
+        \[
+            J_k = \frac{1}{n}\sum_{i=1}^n \left(\xx_i^\T \xx_i - \sum_{i=1}^k\vv_j^\T \xx_i\xx_i^\T \vv_j\right) = \frac{1}{n}\sum_{i=1}^n \xx_i^\T\xx_i - \sum_{j=1}^k\lambda_j.
+        \]
+        Hint: recall that $\vv_j^\T \Sigmab \vv_j = \lambda_j\vv_j^\T\vv_j = \lambda_j$.
+
+    \item If $k=d$ there is no truncation, so $J_d=0$. Use this to show that the error from only using $k<d$
+        terms is given by
+        \[
+            J_k = \sum_{j=k+1}^d \lambda_j.
+        \]
+        Hint: partition the sum $\sum_{j=1}^d \lambda_j$ into $\sum_{j=1}^k \lambda_j$ and $\sum_{j=k+1}^d \lambda_j$.
+\end{enumerate}
+
+\end{document}
