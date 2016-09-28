@@ -37,7 +37,7 @@ jointly Gaussian with parameters
 \]
 where
 \[
-    \mub_1 = \m{0\\0}, \;\; \mub_2 = 5, \;\; \Sigmab_{11} = \m{5 & 8\\ 8 & 12}, \;\; \Sigmab_{21}^\T = \Sigmab_{12} = \m{5\\11}, \;\; \Sigmab_{22} = \m{14}.
+    \mub_1 = \m{0\\0}, \;\; \mub_2 = 5, \;\; \Sigmab_{11} = \m{6 & 8\\ 8 & 13}, \;\; \Sigmab_{21}^\T = \Sigmab_{12} = \m{5\\11}, \;\; \Sigmab_{22} = \m{14}.
 \]
 Compute
 \begin{enumerate}[(a)]
@@ -94,8 +94,23 @@ In the same figure (and different axes) produce a `regularization path' plot. De
 more in section 13.3.4 of Murphy, a regularization path is a plot of the optimal weight on
 the $y$ axis at a given regularization strength $\lambda$ on the $x$ axis. Armed with this
 plot, provide an ordered list of the top five features in predicting the log-shares of a news
-article from this dataset (with justification). Tip: you can reuse most of your code from
-the first homework.\\[1em]
+article from this dataset (with justification). We can see a more detailed analysis of this
+at \url{https://en.wikipedia.org/wiki/Proximal_gradient_methods_for_learning} and
+\url{https://web.stanford.edu/~boyd/papers/pdf/prox_algs.pdf} but you will have to wrap
+the gradient descent step with a threshold function
+\[
+    \mathrm{prox}_{\gamma}(\xx)_i = \begin{cases}
+        \xx_i - \gamma & \xx_i > \gamma\\
+        0 & |\xx_i| \leq \gamma\\
+        \xx_i + \gamma & x_i < -\gamma
+    \end{cases}
+\]
+so that each iterate
+\[
+    \xx_{i+1} = \mathrm{prox}_{\gamma}\left( \xx_i - \gamma \nabla f(\xx_i) \right)
+\]
+where $\gamma$ is your learning rate. Tip: you can reuse most of your code from the
+first homework.\\[1em]
 
 \textbf{5. (SVD Image Compression)} Load the image of a scary clown at \url{http://i.imgur.com/X017qGH.jpg}
 into a matrix/array. Plot the progression of the 100 largest singular values for the original image
