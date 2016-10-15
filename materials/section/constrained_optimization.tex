@@ -1,0 +1,238 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumerate,mathtools}
+\usepackage{algorithm2e}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\input{macros.tex}
+
+\begin{document}
+
+\begin{center}
+    \large Constrained Optimization
+
+    \normalsize Conner DiPaolo\footnote{Much of this material originates from
+    Boyd \& Vandenberghe's \textit{Convex Optimization}. If you're looking for
+    a more detailed analysis of these methods, consult that text. It's free online
+    at \url{http://stanford.edu/~boyd/cvxbook/}}
+\end{center}
+\vspace{3\baselineskip}
+
+\section{Introduction}
+
+We have already covered methods used to solve convex optimization problems of
+the form
+\begin{align*}
+    \text{minimize: } & f(\xx)\\
+\end{align*}
+where $f$ is convex. This problem is called \textit{unconstrained}, since the place
+on constraints on $\xx$, besides that it must live in $\RR^n$. Namely, one of the
+quickest and most consistent algorithms for solving such problems (ignoring some aspects
+of scaling) is \textit{Newton's Method}, where we approximate our objective as a quadratic
+using the second order Taylor approximation $f(\xx) \approx f(\xx_i) + \nabla f(\xx_i)(\xx - \xx_i)
++ \dfrac{1}{2}(\xx - \xx_i)^\T\nabla^2 f(\xx_i) (\xx - \xx_i)$ and solve that in closed form
+to find the next iterate $\xx_{i+1}$. Newton's method is \textit{fast}, obeying a property
+called \textit{quadratic convergence}. Once $\xx_i$ gets close enough (for some unknown measure
+of `enough') to the optimal solution, every Newton iteration will double the number of significant
+digits in your current approximation of the optimal $\xx^\star$. When you are not close to
+the optimal solution, Newton's method linearly converges to the optimal $\xx^\star$ (under some conditions
+including convexity). We have never addressed, up until this point, how to solve more general convex
+optimization problems which can be \textit{constrained}
+\begin{align*}
+    \text{minimize: } & f_i(\xx)        \tag{objective function}\\
+    \text{subj. to: } & f_i(\xx) \leq 0 \tag{inequality constraints}\\
+                      & A\xx = \bb.     \tag{equality constraints}
+\end{align*}
+For this problem to be convex we require that the feasible set (the region of $\RR^n$ where the
+constraints hold) be a convex set, and that the objective function be convex. This implies that
+all inequality constraints $f_i$ must be convex, and that equality constraints must be affine.
+We will first attack how to solve equality constrained convex optimization problems before
+moving onto inequality constrained problems. Combining the two methods is trivial once you have
+both, and we will briefly address this.
+
+\section{Equality Constrained Minimization}
+\subsection{Equality Constrained Newton's Method}
+
+For unconstrained Newton's method, at every iteration we approximated our objective as a quadratic
+about our current estimate for the optimal $\xx^\star$, and found a new approximate optimum under
+that quadratic approximation. It would make sense, then, for equality constrained optimization problems
+of the form
+\begin{align*}
+    \text{minimize: } & f(\xx)\\
+    \text{subj. to: } & A\xx = b
+\end{align*}
+to just approximate the objective as a quadratic at each iteration and solve that problem in closed form.
+Is a quadratic program with equality constraints solvable in closed form? Yes!
+
+\begin{example}[Equality Constrained Convex Quadratic Minimization]
+    Consider the task of solving the problem
+    \begin{align*}
+        \text{minimize: } & \frac{1}{2}\xx^\T P\xx + \qq^\T\xx + \rr\\
+        \text{subj. to: } & A\xx = \bb.
+    \end{align*}
+    where $P \succeq 0$. From this condition on $P$ we know the problem is convex.
+    From the KKT conditions we know at optimality
+    \[
+        A\xx^\star = \bb
+    \]
+    to ensure primal feasibility.
+    Further, we can see that this has a Lagrangian
+    \[
+        \Lc(\xx, \nub) = \frac{1}{2}\xx^\T P\xx + \qq^\T\xx + \rr + (A\xx - \bb)^\T\nub.
+    \]
+    From the KKT conditions, again, we know that $\nabla L = 0$
+    at optimality, so
+    \[
+        \nabla_{\xx} \Lc(\xx^\star, \nub^\star) = P\xx^\star + \qq + A^\T\nub^\star = 0.
+    \]
+    Thus we have two equations in two unknowns, and can solve this
+    system analytically in the block form
+    \[
+        \m{P & A^\T \\ A & 0} \m{\xx^\star \\ \nub^\star} = \m{-\qq \\ \bb}
+    \]
+    This is known as the KKT system, and can be solved as any linear system would.
+\end{example}
+
+So now let's attack the general equality constrained problem in a Newton-esque algorithm
+that we'll call Equality Constrained Newton's Method. First, create our approximate problem
+\begin{align*}
+    \text{minimize: } & f(\xx_i) + \nabla f(\xx_i) (\xx - \xx_i) + \frac{1}{2}(\xx - \xx_i)^\T\nabla^2 f(\xx_i) (\xx - \xx_i)\\
+    \text{subj. to: } & A\xx = \bb.
+\end{align*}
+This is close to the form of the example above, but we need $A\xx = \bb$ to be of
+the form $A(\xx - \xx_i) = \cc$ for some $\cc$. Assuming $A\xx = \bb$ to begin with,
+this gives the problem
+\begin{align*}
+    \text{minimize: } & f(\xx_i) + \nabla f(\xx_i) (\xx - \xx_i) + \frac{1}{2}(\xx - \xx_i)^\T\nabla^2 f(\xx_i) (\xx - \xx_i)\\
+    \text{subj. to: } & A(\xx-\xx_i) = \0.
+\end{align*}
+Denote $\Delta \xx_i = \xx_{i+1} - \xx_i$. Then at each step we solve the KKT system
+\[
+    \m{\nabla^2 f(\xx_i) & A^\T\\A & 0} \m{\Delta \xx_i\\\nub^\star} = \m{-\nabla f(\xx_i)\\\0}
+\]
+for $\Delta\xx_i$ and give the next iterate $\xx_{i+1} = \Delta\xx_i + \xx_i$, repeating this process.
+Note that this algorithm reduces to a regular Newton step if we have no equality constraints. In a cleaner
+form we have the following algorithm.
+
+\IncMargin{1em}
+\begin{algorithm}
+    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+    \textbf{Equality Constrained Newton's Method}\\
+    \Input{$f$, $\nabla f$, $\nabla^2f$, starting point $\xx_0$ such that $A\xx_0 = \bb$, tolerance $\epsilon$}
+    \Output{optimal point $\xx^\star$}
+    $i \leftarrow 0$\\
+    \While{$|| \Delta\xx_i ||_2 \geq \epsilon$}{
+        solve the KKT system for $\Delta\xx_i$\\
+        $\xx_{i+1} \leftarrow \xx_i + \Delta\xx_i$\\
+        $i \leftarrow i + 1$
+    }
+    \textbf{return } $\xx^\star = \xx_{i+1}$
+\end{algorithm}
+
+\subsection{Infeasible Start Equality Constrained Newton's Method}
+
+One drawback of using the above algorithm is that we must start with some $\xx_0$ such that
+$A\xx_0 = \bb$, which could be nontrivial to compute. It would be better if that step of generating
+feasibility is encapsulated in our algorithm. Now suppose that $A\xx_0 \neq b$. Then to ensure primal
+feasibility in each step our original equality constraint $A(\xx + \Delta\xx) = \bb$ gives
+$A\Delta\xx = \bb - A\xx$. Note that if we have feasible $\xx$ the equality constraint reduces to
+$A\Delta\xx = \0$ as seen above in the feasible start method. Substituting this into the optimality
+conditions gives the revised KKT system
+\[
+    \m{\nabla^2 f(\xx_i) & A^\T\\A & 0} \m{\Delta \xx_i\\\nub^\star} = -\m{\nabla f(\xx_i)\\A\xx - \bb}.
+\]
+Using this new system to solve for $\Delta\xx_i$ gives a feasible point $\xx_i + \Delta\xx_i$ after any iteration.
+This, then, gives a slightly more general algorithm, Infeasible Start Newton's Method.
+
+\IncMargin{1em}
+\begin{algorithm}
+    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+    \textbf{Infeasible Start Newton's Method}\\
+    \Input{$f$, $\nabla f$, $\nabla^2f$, starting point $\xx_0$, tolerance $\epsilon$}
+    \Output{optimal point $\xx^\star$}
+    $i \leftarrow 0$\\
+    \While{$|| \Delta\xx_i ||_2 \geq \epsilon$}{
+        solve the infeasible start KKT system for $\Delta\xx_i$\\
+        $\xx_{i+1} \leftarrow \xx_i + \Delta\xx_i$\\
+        $i \leftarrow i + 1$
+    }
+    \textbf{return } $\xx^\star = \xx_{i+1}$
+\end{algorithm}
+
+\section{General Constrained Minimization}
+
+Consider the convex problem
+\begin{align*}
+    \text{minimize: } & f_0(\xx)\\
+    \text{subj. to: } & f_i(\xx) \leq 0 \qquad i = 1,2,\dots,m\\
+                      & A\xx = \bb.
+\end{align*}
+One way to turn this into a unconstrained optimization problem, taking motivation from the Lagrangian,
+would be to minimize the objective, but when the constraints aren't satisfied to bump the objective
+$f_0$ to infinity. We can do this with the indicator function
+\[
+I_-(u) = \begin{cases*}0 & $u \leq 0$\\ \infty & otherwise.\end{cases*}
+\]
+This gives the equivalent optimization problem
+\begin{align*}
+    \text{minimize: } & f_0(\xx) + \sum_{i=1}^m I_-(f_i(\xx))\\
+    \text{subj. to: } & A\xx = \bb
+\end{align*}
+This is great, but we can't differentiate the objective and therefore can't use Infeasible Start Newton Method
+shown above to solve this problem. Instead, we approximate
+\[
+    I_-(u) \approx -\frac{1}{t}\log(-u).
+\]
+As $t$ approaches $\infty$, this approximate converges to $I_-$ pointwise. This gives the
+\textit{differentiable} optimization problem (assuming $f_0$ is differentiable, of course)
+\begin{align*}
+    \text{minimize: } & f_0(\xx) - \frac{1}{t}\sum_{i=1}^m \log(-f_i(\xx))\\
+    \text{subj. to: } & A\xx = \bb
+\end{align*}
+Since the negative $\log$ of a convex function is convex, this problem also retains convexity, and we can
+solve it using Infeasible Start Newton Method! Call the solution to the above problem $\xx_t^\star$. We can
+show (and Boyd and Vandenberghe do!) that $\xx_t^\star$ is $m/t$ suboptimal. Then if we want $\epsilon$ accuracy
+we could just set $t = m/\epsilon$ and solve that problem:
+\begin{align*}
+    \text{minimize: } & f_0(\xx) - \frac{\epsilon}{m}\sum_{i=1}^m \log(-f_i(\xx))\\
+    \text{subj. to: } & A\xx = \bb
+\end{align*}
+This would work in theory, but practical issues with $\epsilon$ being too small, for example, causes this to not work
+well. We can change this slightly to work very well in practice. Instead of just starting with some large $t$,
+we solve a sequence of smaller problems $\xx_{t_0}^\star,\xx_{t_1}^\star,\dots$ for increasing $t_i$ until
+$t_i \geq m/\epsilon$, ensuring an accuracy $\epsilon$. This algorithm is outlined as follows.
+
+\IncMargin{1em}
+\begin{algorithm}
+    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+    \textbf{Barrier Method}\\
+    \Input{strictly feasible $\xx$, $t := t^{(0)}>0$, $\mu>1$, tolerance $\epsilon>0$}
+    \Output{optimal point $\xx^\star$}
+    $i \leftarrow 0$\\
+    \While{$m/t < \epsilon$}{
+        compute $\xx_{t^(i)}^\star$ using $\xx_{t^{i-1}}^\star$ as a starting point\\
+        set $t \leftarrow \mu t$
+    }
+    \textbf{return } $\xx^\star = \xx_{t^{(i+1)}}^\star$
+\end{algorithm}
+
+Boyd and Vandenberghe go into a detailed analysis of why this is true, but in practice
+setting $\mu$ between $3$ and $100$ or so seems to work well. Basically, if $\mu$ is small,
+each problem iterate is likely to be close to the previous problem, and we will hug the
+quadratic convergence of Newton's Method closely, resulting in few inner iterations but many
+outer iterations. If $\mu$ is large, the problem iterates are likely to be quite different
+from the previous iterates, which results in many inner iterations to solve the problems but
+few outer iterations. Empirically, when $\mu$ is between $3$ and $100$, these effects tend to
+cancel one another out.\\
+
+The Barrier Method is what is known as an \textit{Interior Point Method}, because it traverses
+the interior of the feasible set to find the optimal solution (when iterating over $t$) instead
+of hugging the boundary of the region, like the Simplex algorithm for linear programs does. With
+this algorithm, you should be able to solve all optimization problems we would deal ever deal with
+in the course.
+
+\end{document}
