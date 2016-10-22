@@ -61,11 +61,12 @@ in your code or math.
 
 \textbf{4 (MAP Mixture of Bernoullis)} Consider a mixture of Bernoullis with a Dirichlet prior on the mixture
 weights $\pib \sim \mathrm{Dir}(\alphab)$ and a Beta prior on the mean parameter $\mu_{kj} \sim \beta(\alpha,\beta)$.
-Use $\alphab=1$ and choose an appropriate $(\alpha,\beta)$ pair for your prior (back this up).
+Use $\alphab=\1$ and choose an appropriate $(\alpha,\beta)$ pair for your prior (back this up).
 Note that the M step for the mean is given in problem 2 (Murphy 11.3). Cluster the MNIST training dataset we used
-from homework 1 (\url{http://pjreddie.com/media/files/mnist_train.csv}). Provide a convergence plot of the MAP objective
-(which must monotonically increase) and plot the mean images for each class. Do the clusters roughly correspond to
-different digits (back this up with numbers)?
+from homework 1 (\url{http://pjreddie.com/media/files/mnist_train.csv}) using this mixture with 10 components.
+Provide a convergence plot of the MAP objective
+(which must monotonically increase) and plot the mean images for each component. Do the clusters roughly correspond to
+different digits (back this up somehow)?
 
 \textbf{5 (Operations Preserving Kernels)} Let $\kappa(\cdot,\cdot)$ and $\lambda(\cdot,\cdot)$ be valid positive
 semi-definite (Mercer) kernels mapping from a sample space $\mathcal{S}$ to $\RR$. Let $\alpha \geq 0$ be a real number
