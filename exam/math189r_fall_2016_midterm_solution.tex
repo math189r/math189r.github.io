@@ -370,8 +370,8 @@ please ask for clarification.
             \mathbf{0}$.\\[1em]
             From (a) we have (adding the noise to the $\mathbf{K}$ term and setting $\boldsymbol{\mu}=\mathbf{0}$)
             \begin{align*}
-                \mathbb{P}(\mathbf{f}_\star | \mathbf{X}_\star, \mathbf{X}, \mathbf{f}) &= \mathcal{N}(\mathbf{f}_\star|\boldsymbol{\mu}_\star,\mathbf{\Sigma}_\star)\text{, where}\\
-                \boldsymbol{\mu}_\star &= \mathbf{K}_\star^\top\left(\mathbf{K} + \sigma^2 \mathbf{I}\right)^{-1}\mathbf{f}\text{ and}\\
+                \mathbb{P}(\mathbf{f}_\star | \mathbf{X}_\star, \mathbf{X}, \mathbf{y}) &= \mathcal{N}(\mathbf{f}_\star|\boldsymbol{\mu}_\star,\mathbf{\Sigma}_\star)\text{, where}\\
+                \boldsymbol{\mu}_\star &= \mathbf{K}_\star^\top\left(\mathbf{K} + \sigma^2 \mathbf{I}\right)^{-1}\mathbf{y}\text{ and}\\
                 \mathbf{\Sigma}_\star &= \mathbf{K}_{\star\star} - \mathbf{K}_\star^\top \left(\mathbf{K}+\sigma^2\mathbf{I}\right)^{-1}\mathbf{K}_\star
             \end{align*}
             \vfill
