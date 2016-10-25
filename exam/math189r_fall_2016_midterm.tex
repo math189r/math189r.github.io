@@ -1,0 +1,314 @@
+\documentclass[letter, 12pt]{article}
+\usepackage[tmargin=.5in,lmargin=0.8in,rmargin=0.8in,bmargin=1in,paper=letterpaper]{geometry}
+%\usepackage[mathlf,textlf,minionint]{minionpro}
+\usepackage[LY1,OT1]{fontenc}
+\usepackage{pifont,amssymb}
+\usepackage{amsmath}
+\usepackage[allowmove]{url}
+\usepackage{fancyhdr,ifthen}
+\usepackage{tikz}
+\usepackage{multicol}
+% --------------------------------------------------------------------
+\newif\ifpdf \ifx\pdfoutput\undefined
+\pdffalse
+\else
+\pdftrue
+\fi
+\usepackage[stretch=40,step=8,selected=true]{microtype}  % allow font expansion up to +/- 4% of normal width
+% --------------------------------------------------------------------
+\begin{document}
+\newcommand{\smalltimes}{\mbox{\footnotesize $\times$}}
+\newcommand{\isdef}{\stackrel{\mathrm{def}}{=}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\ind}{\mbox{\hspace{0.25in}}}
+\newcommand{\lh}{\stackrel{\mbox{\tiny{l'H}}}{=}}
+\renewcommand{\Re}{\mathop{\rm {Re}}}
+\renewcommand{\Im}{\mathop{\rm {Im}}}
+\newcommand{\Res}{\mathop{\rm {Res}}}
+\newcommand{\Arg}{\mathop{\rm {Arg}}}
+\newcommand{\Log}{\mathop{\rm {Log}}}
+\newcommand{\sech}{\mathop{\rm {sech}}}
+\newcommand{\mat}[1]{\left(\begin{matrix}#1\end{matrix}\right)}
+\newcommand{\erf}{\mathop{\rm {erf}}}
+\newcommand{\erfc}{\mathop{\rm {erfc}}}
+\newcommand{\vect}[1]{\vec{\mathbf{#1}}}
+\renewcommand{\theenumi}{\arabic{enumi}}
+\renewcommand{\labelenumi}{{\theenumi}.}
+\renewcommand{\theenumii}{\alph{enumii}}
+\renewcommand{\labelenumii}{(\theenumii)}
+\renewcommand{\ttdefault}{cmtt}
+\newcommand{\MyriadPro}[2]{\usefont{LY1}{MyriadPro}{#1}{#2}}
+\parindent=0in
+\thispagestyle{empty}
+\pagestyle{empty}
+\pagenumbering{arabic}
+\setcounter{page}{0}
+
+\mbox{ }
+
+\vspace{-.2in}
+
+\begin{center}
+{\Large\usefont{LY1}{MyriadPro}{bl}{nw}Math 189r Fall 2016 Midterm}
+\end{center}
+
+\vspace{.3in}
+
+\begin{large}
+\noindent \textbf{Name:} \hrulefill \hrulefill \hrulefill 
+\mbox{ }\textbf{Time start/end:} \hrulefill \hrulefill
+
+\vspace{.3in}
+Harvey Mudd College's Honor Code is in effect for all students taking this
+exam.  If you feel unclear about any of the following instructions,
+please ask for clarification.
+
+\begin{itemize}
+\item This exam should be completed in a contiguous \textbf{three hour} period.
+    If you so desire, you may insert a \textbf{twenty minute break} at the
+    \textbf{one an a half hour mark} to get food, etc., but you are still restricted
+    to the resources available to you during the exam (no internet). You may not
+    write on your exam during the break if you choose to take one.
+\item No notes, books, computers or calculators will be allowed during
+  the exam or break period except for one sheet of notes (8.5$\times$11'', front \&
+  back) that you have prepared yourself.  When you are finished,
+  staple the note sheet you used to the back of the exam.  Please turn in your exam paper 
+  into the box outside Professor Gu's office (SHAN3420) no later than Monday, October, 6:30pm.
+\item Points may be deducted for answers that are not explained clearly.
+\item Please pace yourself as this exam has four questions, some with
+  multiple parts.
+\end{itemize}
+\end{large}
+\vspace{.1 in}
+\begin{center} \begin{Large}
+\begin{tabular}[b]{|l|l|} \hline
+ Problem 1 & \hspace{.5 in} / 17 points \\ \hline
+ Problem 2 & \hspace{.5 in} / 24 points \\ \hline
+ Problem 3 & \hspace{.5 in} / 34 points \\ \hline
+ Problem 4 & \hspace{.5 in} / 25 points \\ \hline
+ Total     & \hspace{.5 in} / 100 points \\ \hline 
+\end{tabular} \end{Large}
+\end{center}
+
+\newpage 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  Equation Sheet                    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+    Potentially Useful Equations\\
+
+    \[
+        \mathbb{P}_{emp}(x) = \frac{1}{n}\sum_i \delta(x - x_i)
+    \]
+    \[
+        \int \delta(x-t)f(x)dx = f(t)
+    \]
+    \[
+        \|\mathbf{x}\|_1 = \sum_i |\mathbf{x}_i|
+    \]
+    \[
+        \|\mathbf{x}\|_2^2 = \mathbf{x}^\top\mathbf{x}
+    \]
+    \[
+        \mathrm{cov}[\mathbf{x}] = \mathbb{E}\left[(\mathbf{x} - \mathbb{E}[\mathbf{x}])(\mathbf{x} - \mathbb{E}[\mathbf{x}])^\top\right]
+    \]
+    \[
+        \mathcal{N}(\mathbf{x}|\boldsymbol{\mu},\mathbf{\Sigma}) = \frac{1}{(2\pi)^{D/2}|\mathbf{\Sigma}|^{1/2}}\exp\left[-\frac{1}{2}(\mathbf{x} - \boldsymbol{\mu})^\top\mathbf{\Sigma}^{-1}(\mathbf{x} - \boldsymbol{\mu})\right]
+    \]
+    \[
+        \mathbb{P}(\mathbf{x}_1|\mathbf{x}_2) = \mathcal{N}(x_1|\boldsymbol{\mu}_{1|2},\mathbf{\Sigma}_{1|2})
+    \]
+    \[
+        \boldsymbol{\mu}_{1|2} = \boldsymbol{\mu}_1 + \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1}(\mathbf{x}_2 - \boldsymbol{\mu}_2)
+    \]
+    \[
+        \mathbf{\Sigma}_{1|2} = \mathbf{\Sigma}_{11} - \mathbf{\Sigma}_{12}\mathbf{\Sigma}_{22}^{-1}\mathbf{\Sigma}_{21}
+    \]
+    \[
+        \hat{\boldsymbol{\mu}} = \frac{1}{N}\sum_i \mathbf{x}_i
+    \]
+    \[
+        \hat{\mathbf{\Sigma}} = \sum_i (\mathbf{x}_i - \hat{\boldsymbol{\mu}})(\mathbf{x}_i - \hat{\boldsymbol{\mu}})^\top
+    \]
+    \[
+        \mathrm{Cat}(\mathbf{x}|\theta) = \prod_{j=1}^K \theta_j^{\mathbb{I}(x_j = 1)}
+    \]
+    \[
+        \mathbb{P}(\mathbf{x}|\theta) = \frac{1}{Z(\theta)}h(\mathbf{x})\exp\left(\theta^\top \phi(\mathbf{x})\right)
+    \]
+    \[
+        \mathbb{KL}(p\|q) = \int p(x)\log\frac{p(x)}{q(x)}dx
+    \]
+    \[
+        \nabla_\mathbf{x}\left(\mathbf{x}^\top A\mathbf{x} + \mathbf{b}^\top\mathbf{x}\right) = (A + A^\top)\mathbf{x} + \mathbf{b}
+    \]
+    \[
+        \nabla^2_\mathbf{x}\left(\mathbf{x}^\top A\mathbf{x} + \mathbf{b}^\top\mathbf{x}\right) = (A + A^\top)
+    \]
+\end{center}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                     Problems                       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item (17 Points) Consider the Ridge Regression optimization problem
+    \[
+        \mathrm{minimize:}~f(\mathbf{x}) = \|\mathbf{A}\mathbf{x} - \mathbf{b}\|_2^2 + \|\mathbf{\Gamma}\mathbf{x}\|_2^2.
+    \]
+    \begin{enumerate}
+        \item[(a)] Solve for the optimal $\mathbf{x}^\star$ in closed form.\vfill
+        \item[(b)] Consider a dataset $\mathcal{D} = \{(0,1), (1,2),(2,1),(3,2)\}$.
+            Construct a matrix $A$ and $\mathbf{b}$ from this dataset $\mathcal{D}$ and
+            compute the Ridge estimate with $\mathbf{\Gamma} = \mathbf{I}$. Note you
+            may leave your solution in the form of the inverse of a matrix times a
+            vector instead of computing the inverse by hand. All other operations must
+            be simplified.\vfill
+    \end{enumerate}
+    \clearpage
+
+\item (24 Points - 3 each) Indicate whether each of the following
+    statements is true (T) or not necessarily true (X).  Be careful with
+    your answers as no partial credit will be awarded on this problem.
+    \begin{enumerate}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+      The following is true: $\mathrm{cov}[A\mathbf{x} + \mathbf{b}] = A^\top\mathrm{cov}[\mathbf{x}]A$.
+    }
+    \vspace{.4in}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+      Consider minimizing $-\ell(\mathbf{w},\mathcal{D}_{train}) +
+      \lambda\|\mathbf{w}\|_2^2$ where $\ell(\mathbf{w},\mathcal{D}) =
+      \frac{1}{n}\sum_i y_i\log\sigma(\mathbf{w}^\top \mathbf{x}_i) + (1-y_i)\log(1 -
+      \sigma(\mathbf{w}^\top\mathbf{x}_i))$ is the average
+      log-likelihood on a dataset $\mathcal{D}$ for the $\ell_2$-regularized logistic
+      regression model. If the training data is linearly separable, might some weights
+      $w_j$ become infinite if $\lambda=0$? (Murphy 8.6.c)
+    }
+    \vspace{.4in}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+      Adding a zero-mean Gaussian Prior on each of the weights in a Logistic Regression
+      model will encourage sparser weights than a zero-mean Laplace prior in a Maximum-a-Posteriori
+      estimation of the optimal parameters.
+      }
+    \vspace{.4in}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+      Minimizing $\|X\mathbf{w} - \mathbf{y}\|_2^2$ and maximizing the likelihood
+      $\prod_i \mathcal{N}(\mathbf{y}_i | \mathbf{w}^\top\mathbf{x}_i, \sigma^2)$ all
+      result in the Normal Equations, the optimal solution $X^\top X\mathbf{w}^\star = X^\top \mathbf{y}$,
+      in the context of linear regression.
+      }
+    \vspace{.4in}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+      A covariance matrix $\mathbf{\Sigma}$ could potentially have a negative eigenvalue.
+      }
+    \vspace{.4in}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+      The level sets of a multivariate Gaussian density are always ellipses of the form
+      $\{\mathbf{x}: \mathbf{x}^\top A \mathbf{x} = k\}$.
+      }
+    \vspace{.4in}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+          The Multivariate Normal Distribution is not in the exponential family.
+      }
+    \vspace{.4in}
+    \item
+      \raisebox{.1in}{\fbox{\parbox[t][.4in]{.4in}{\mbox{\hspace{.4in}}}}} \parbox[t]{5in}{
+          The goal of the Support Vector Machine is to maximize the margin, defined as the distance
+          of the closest examples from the decision boundary.
+      }
+
+    \end{enumerate}
+    \clearpage
+\item (34 Points) Consider a Poisson distributed $X\sim \mathrm{Poi}(\lambda)$ defined
+    over $X\in\{0,1,2,\dots\}$ with probability mass function
+    \[
+        \mathrm{Poi}(x|\lambda) = e^{-\lambda}\frac{\lambda^x}{x!}.
+    \]
+    Note that $\mathbb{E}[X] = \lambda$.
+    \begin{enumerate}
+        \item Show that the Poisson distribution is in the Exponential Family.\vfill\vfill
+        \item Consider creating a Generalized Linear Model from the Poisson distribution
+            to model some count data. This will work since we showed that the distribution
+            is an exponential family distribution. What is the distribution of the
+            predicted value $\hat y$ given a datapoint $\mathbf{x}_i$ and weights
+            $\mathbf{w}$?\vfill\clearpage
+        \item Derive an expression for the log-likelihood of a dataset $\mathcal{D}$,
+            $\log\mathbb{P}(\mathcal{D}|\mathbf{w})$. Assume the data is identically and
+            independently distributed.\vfill
+        \item Suppose we place an isotropic ($\mathbf\Sigma = \sigma^2\mathbf{I}$)
+            Gaussian prior on the weights $\mathbf{w}$. Derive an expression which, when
+            maximized, would maximize
+            $\log\mathbb{P}(\mathbf{w}|\mathcal{D})$ (basically ignore constants).
+            \textit{Hint:} think about problem
+            1.a from homework 1. You may use results from that part of the assignment.
+            You may introduce an auxillary variable $\lambda$ which somehow relates
+            to $\sigma^2$ (and you don't need to define that relationship exactly).
+            \vfill
+        \item Suppose we want to compute a maximum-a-posteriori estimate of $\mathbf{w}$
+            given the prior from the previous problem. State the optimization problem
+            we are trying to solve. Is this solvable in closed form? If so, solve it.
+            Otherwise, compute the gradient of the objective function with respect
+            to $\mathbf{w}$.\vfill
+    \end{enumerate}
+    \clearpage
+\item (25 Points) Suppose we want to model where we have some input
+    data $\mathbf{X}$, with each datapoint corresponding to some observed function output
+    $\mathbf{f}$. We also have points $\mathbf{X}_\star$ with which we want to predict
+    what the function output $\mathbf{f}_\star$ will be. Our modelling assumption is this:
+    \begin{enumerate}
+        \item[(1)] The function outputs are jointly normal with mean $\boldsymbol{\mu}$ and
+            covariance $\mathbf{K}$ such that
+            \[
+                \mat{\mathbf{f}\\\mathbf{f}_\star} \sim \mathcal{N}\left(\mat{\boldsymbol{\mu}\\\boldsymbol{\mu}_\star},\mat{\mathbf{K}&\mathbf{K}_\star\\\mathbf{K}_\star^\top&\mathbf{K}_{\star\star}}\right)
+            \]
+        \item[(2)] The mean $\boldsymbol{\mu} = \boldsymbol{\mu}(X) =
+            \mat{m(\mathbf{x}_i),\dots,m(\mathbf{x}_n)}$ for $m : \mathcal{X} \rightarrow
+            \mathbb{R}$ where $\mathcal{X}$ is the space your data live in (points on
+            the line, locations on earth, molecules, etc.). Notationally,
+            $\boldsymbol{\mu}_\star = \boldsymbol{\mu}(X_\star)$.
+        \item[(3)] The covariance between two datapoints $\mathbf{K}_{ij} =
+            \kappa(\mathbf{x}_i,\mathbf{x}_j)$ where $\kappa : \mathcal{X}\times
+            \mathcal{X}\rightarrow \mathbb{R}$. Later in the course we'll call this
+            $\kappa(\cdot,\cdot)$ a valid kernel. This implies
+            that $\mathbf{K}\in\mathbb{R}^{n\times n}$, $\mathbf{K}_\star\in
+            \mathbb{R}^{n\times n_\star}$, and $\mathbf{K}_{\star\star}\in
+            \mathbb{R}^{n_\star\times n_\star}$.
+    \end{enumerate}
+    \begin{enumerate}
+        \item Compute the posterior predictive distribution
+            $p(\mathbf{f}_\star|\mathbf{X}_\star,\mathbf{X},\mathbf{f})$ when
+            we assume that the observed $\mathbf{f}$ has no noise. \textit{Hint:}
+            consider conditioning a Gaussian.\vfill
+        \item Compute the posterior predictive distribution
+            $p(\mathbf{f}_\star|\mathbf{X}_\star,\mathbf{X},\mathbf{y})$ where
+            we assume our observations $\mathbf{y} = f(\mathbf{x}) + \epsilon$ with
+            $\epsilon
+            \sim \mathcal{N}(0,\sigma^2)$. \textit{Hint:} this assumption will only
+            change $\mathbf{f}$ to $\mathbf{y}$ and $\mathbf{K}$ (not $\mathbf{K}_\star$
+            or $\mathbf{K}_{\star\star}$) into $\mathbf{K} + \sigma^2\mathbf{I}$
+            from the equation in (1). For this part assume the mean $\boldsymbol{\mu}=
+            \mathbf{0}$.\vfill
+        \item Show that when predicting at only one location $\mathbf{x}_\star$ the
+            mean of the predictive distribution from the previous part
+            $\overline{\mathbf{f}} = \sum_{i=1}^n \alpha_i
+            \kappa(\mathbf{x}_i,\mathbf{x}_\star)$ with $\alpha = (\mathbf{K} + \sigma^2
+            \mathbf{I})^{-1}\mathbf{y}$ being a constant vector depending on your training
+            data and kernel. Armed with this knowledge, how might be we restrict
+            the predicted function $\overline{\mathbf{f}}(\mathbf{x})$ to be periodic?
+            \textit{Hint:} note that $\kappa(\mathbf{x}_i,\mathbf{x}_\star)$ is function of
+            $\mathbf{x}_\star$ and the sum of periodic functions is periodic.
+            \vfill
+    \end{enumerate}
+    \clearpage
+\end{enumerate}
+\end{document}
+
