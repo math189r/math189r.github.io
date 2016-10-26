@@ -355,7 +355,7 @@ please ask for clarification.
             Using the Gaussian Conditioning Theorem we have the conditional distribution
             \begin{align*}
                 \mathbb{P}(\mathbf{f}_\star | \mathbf{X}_\star, \mathbf{X}, \mathbf{f}) &= \mathcal{N}(\mathbf{f}_\star|\boldsymbol{\mu}_\star,\mathbf{\Sigma}_\star)\text{, where}\\
-                \boldsymbol{\mu}_\star &= \boldsymbol{\mu}(\mathbf{X}) + \mathbf{K}_\star^\top\mathbf{K}^{-1}(\mathbf{f} - \boldsymbol{\mu}(\mathbf{X}))\text{ and}\\
+                \boldsymbol{\mu}_\star &= \boldsymbol{\mu}(\mathbf{X}_\star) + \mathbf{K}_\star^\top\mathbf{K}^{-1}(\mathbf{f} - \boldsymbol{\mu}(\mathbf{X}))\text{ and}\\
                 \mathbf{\Sigma}_\star &= \mathbf{K}_{\star\star} - \mathbf{K}_\star^\top \mathbf{K}^{-1}\mathbf{K}_\star
             \end{align*}
             \vfill
