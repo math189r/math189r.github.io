@@ -31,7 +31,7 @@ sense. Problems are in no specific order.\\[1em]
 estimation of a mixture of Gaussians is given by
 \begin{align*}
     \mub_k &= \frac{\sum_i r_{ik}\xx_i}{r_k}\\
-    \Sigmab_k &= \frac{1}{r_k}\sum_i r_{ik}(\xx_i - \mub_k)(\xx_i - \mub_k)^\T = \frac{1}{r_k}\sum_i r_{ik}\xx_i\xx_i^\T - r_k\mub_k\mub_k^\T.
+\Sigmab_k &= \frac{1}{r_k}\sum_i r_{ik}(\xx_i - \mub_k)(\xx_i - \mub_k)^\T = \frac{1}{r_k}\sum_i r_{ik}\xx_i\xx_i^\T - \mub_k\mub_k^\T.
 \end{align*}
 
 \textbf{2 (Murphy 11.3 - EM for Mixtures of Bernoullis)} Show that the M step for ML estimation
