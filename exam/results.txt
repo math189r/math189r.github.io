@@ -1,0 +1,15 @@
+Statistic  Value
+mean       83.8
+std-dev    15.64834139
+median     89
+min        31
+max        98
+mode       93
+
+Condition      Count
+0<score<=50    2
+50<score<=60   0
+60<score<=70   5
+70<score<=80   3
+80<score<=90   15
+90<score<=100  16
