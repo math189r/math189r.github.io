@@ -1,0 +1,79 @@
+\documentclass[12pt,letterpaper,fleqn]{hmcpset}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\input{../../materials/section/macros.tex}
+
+% info for header block in upper right hand corner
+\name{------}
+\class{Math 189r}
+\assignment{Homework 3}
+\duedate{November 21, 2016}
+
+\begin{document}
+
+There are 4 problems in this set. You need to do 2 problems the first week and 2 the second
+week. Instead of a fifth or sixth problem, \textbf{you are encouraged to work on your final project}.
+Feel free to work with other students, but make sure you write up the homework
+and code on your own (no copying homework \textit{or} code; no pair programming).
+Feel free to ask students or instructors for help debugging code or whatever else,
+though.
+When implementing algorithms you may not use any library (such as \texttt{sklearn})
+that already implements the algorithms but you may use any other library for
+data cleaning and numeric purposes (\texttt{numpy} or \texttt{pandas}). Use common
+sense. Problems are in no specific order.\\[1em]
+
+\textbf{1 (Gaussian Mixture Model)} Consider the generative process for a Gaussian
+Mixture Model:
+\begin{enumerate}[(1)]
+    \item Draw $z_i \sim \mathrm{Cat}(\pib)$ for $i=1,2,\dots,n$.
+    \item Draw $\xx_i \sim \Nc(\mub_{z_i}, \Sigmab_{z_i})$ for $i=1,2,\dots,n$.
+\end{enumerate}
+Note that $z_i$ is unobserved but $\xx_i$ is observed.
+Express this model as a directed graphical model, first `unrolled' and then using
+Plate notation, before answering the following questions. Support all claims.
+\begin{enumerate}[(a)]
+    \item Is $\pib$ independent of $\mub_{z_i}$ or $\Sigmab_{z_i}$ given
+        your dataset $\Dc = \{\xx_i\}$? Does the posterior distribution over
+        $\{\mub,\Sigmab\}$ and $\pib$ factorize? How does this change what inference
+        procedure we need to use for this model?
+    \item If $z_i$ were observed, would this change? Would the posterior then
+        factorize? \textit{Hint:} what other model have we studied that corresponds to
+        observing $z_i$?
+    \item Find the maximum likelihood estimates for $\pib$, $\mub_k$, and $\Sigmab_k$
+        \textit{if} the latent variables $z_i$ were observed.\\
+\end{enumerate}
+
+\textbf{2 (Linear Regression)} Consider the Bayesian Linear Regression model with
+the following generative process:
+\begin{enumerate}[(1)]
+    \item Draw $\ww \sim \Nc(\0, \mathbf{V}_0)$
+    \item Draw $\yy_i \sim \Nc(\ww^\T\xx_i, \sigma^2)$ for $i=1,2,\dots,n$ where $\sigma^2$
+        is known.
+\end{enumerate}
+Express this model as a directed graphical model using Plate notation. Is $\yy_i$
+independent of $\ww$? Is $\yy_i$ independent of $\ww$ \textit{given} $\Dc = \{\xx_i\}$? Support
+these claims.\newpage
+
+\textbf{3 (Collaborative Filtering)} Consider the `ratings' matrix $\Rb\in\RR^{n\times n}$
+with the low rank approximation $\Rb = \Ub \Vb^\T$ where $\Ub$ and $\Vb$ live in
+$\RR^{n\times k}$ where we have $k$ latent factors. Define our optimization problem as
+\begin{align*}
+    \text{minimize: } & f(\Ub,\Vb) = \|\Rb - \Ub\Vb^\T\|_2^2 + \lambda\|\Ub\|_2^2 + \gamma\|\Vb\|_2^2
+\end{align*}
+where $\|\cdot\|_2$ in this case is the Frobenius norm $\|\Rb\|_2^2 = \sum_{ij}\Rb_{ij}^2$.
+Derive the gradient of $f$ with respect to $\Ub_i$ and $\Vb_j$. Derive a stochastic
+approximation to this gradient where you consider a single data point at a time.\\
+
+\textbf{4 (Non-Negative Matrix Factorization)} Consider the dataset at
+\url{http://kdd.ics.uci.edu/databases/reuters21578/reuters21578.html}. Choosing an appropriate
+objective function and algorithm from Lee and Seung 2001\footnote{\url{https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf}}
+implement Non-Negative Matrix Factorization for topic modelling (choose an appropriate number
+of topics/latent features) and assert that the convergence properties proved in the paper hold. 
+Display the 20 most relevant words for each of the topics you discover.
+
+\end{document}
