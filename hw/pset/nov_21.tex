@@ -16,8 +16,8 @@
 
 \begin{document}
 
-There are 4 problems in this set. You need to do 2 problems the first week and 2 the second
-week. Instead of a fifth or sixth problem, \textbf{you are encouraged to work on your final project}.
+There are 5 problems in this set. You need to do 3 problems the first week and 2 the second
+week. Instead of a sixth problem, \textbf{you are encouraged to work on your final project}.
 Feel free to work with other students, but make sure you write up the homework
 and code on your own (no copying homework \textit{or} code; no pair programming).
 Feel free to ask students or instructors for help debugging code or whatever else,
@@ -69,7 +69,21 @@ where $\|\cdot\|_2$ in this case is the Frobenius norm $\|\Rb\|_2^2 = \sum_{ij}\
 Derive the gradient of $f$ with respect to $\Ub_i$ and $\Vb_j$. Derive a stochastic
 approximation to this gradient where you consider a single data point at a time.\\
 
-\textbf{4 (Non-Negative Matrix Factorization)} Consider the dataset at
+\textbf{4 (Alternating Least Squares)} Consider the same setup and objective
+\begin{align*}
+    \text{minimize: } & f(\Ub,\Vb) = \|\Rb - \Ub\Vb^\T\|_2^2 + \lambda\|\Ub\|_2^2 + \gamma\|\Vb\|_2^2
+\end{align*}
+as above in problem (3).
+\begin{enumerate}[(a)]
+    \item Suppose we fix $\Ub$. Find the optimal $\Vb$.
+    \item Suppose we fix $\Vb$. Find the optimal $\Ub$.
+    \item Propose an EM-like (block coordinate ascent, to be exact) like algorithm
+        for minimizing $f(\Ub,\Vb)$ using (a) and (b).
+    \item Will the algorithm you propose in (c) necessarily converge to the global
+        optimal?
+\end{enumerate}
+
+\textbf{5 (Non-Negative Matrix Factorization)} Consider the dataset at
 \url{http://kdd.ics.uci.edu/databases/reuters21578/reuters21578.html}. Choosing an appropriate
 objective function and algorithm from Lee and Seung 2001\footnote{\url{https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf}}
 implement Non-Negative Matrix Factorization for topic modelling (choose an appropriate number
