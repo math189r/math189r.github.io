@@ -59,9 +59,9 @@ Express this model as a directed graphical model using Plate notation. Is $\yy_i
 independent of $\ww$? Is $\yy_i$ independent of $\ww$ \textit{given} $\Dc = \{\xx_i\}$? Support
 these claims.\newpage
 
-\textbf{3 (Collaborative Filtering)} Consider the `ratings' matrix $\Rb\in\RR^{n\times n}$
-with the low rank approximation $\Rb = \Ub \Vb^\T$ where $\Ub$ and $\Vb$ live in
-$\RR^{n\times k}$ where we have $k$ latent factors. Define our optimization problem as
+\textbf{3 (Collaborative Filtering)} Consider the `ratings' matrix $\Rb\in\RR^{m\times n}$
+with the low rank approximation $\Rb = \Ub \Vb^\T$ where $\Ub\in\RR^{m\times k}$ and $\Vb\in\RR^{n\times k}$
+with $k$ latent factors. Define our optimization problem as
 \begin{align*}
     \text{minimize: } & f(\Ub,\Vb) = \|\Rb - \Ub\Vb^\T\|_2^2 + \lambda\|\Ub\|_2^2 + \gamma\|\Vb\|_2^2
 \end{align*}
