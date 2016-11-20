@@ -1,0 +1,77 @@
+\documentclass[12pt,letterpaper,fleqn]{hmcpset}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\input{../../materials/section/macros.tex}
+
+% info for header block in upper right hand corner
+\name{------}
+\class{Math 189r}
+\assignment{Homework 5}
+\duedate{November 28, 2016}
+
+\begin{document}
+
+There are 3 problems in this set.
+Feel free to work with other students, but make sure you write up the homework
+and code on your own (no copying homework \textit{or} code; no pair programming).
+Feel free to ask students or instructors for help debugging code or whatever else,
+though.
+When implementing algorithms you may not use any library (such as \texttt{sklearn})
+that already implements the algorithms but you may use any other library for
+data cleaning and numeric purposes (\texttt{numpy} or \texttt{pandas}). Use common
+sense. Problems are in no specific order.\\[1em]
+
+\textbf{1 (Laplace Approximation)} Reference Section 8.4 of Murphy on Bayesian Logstic Regression. We will
+use the Laplace Approximation to approximate the posterior distribution over
+$\ww$ when we have a prior of the form $\ww \sim \Nc(\0, \Vb_0)$. With the energy
+function $E(\ww) = -\log\PP(\Dc|\ww) - \log\PP(\ww)$,
+\begin{enumerate}[(a)]
+    \item Compute the gradient of the energy $\nabla E$, and
+    \item Compute the Hessian of the energy $\nabla^2 E$.
+    \item Using (a) and (b), what is the Laplace approximate posterior over
+        $\ww$? Assume we have the mode of the posterior $\ww^\star$ such
+        that $\nabla E(\ww^\star) = 0$.
+\end{enumerate}
+
+\textbf{2 (Logistic Regression)} Download the data at
+\url{https://math189r.github.io/hw/data/classification.csv}. Consider the Laplace Approximated
+Bayesian Logistic Regression from Problem 1. Calculate the posterior distribution
+over $\ww$.
+
+\textbf{3 (Monte-Carlo Predictive Posterior)} From Problem 2 we have the distribution
+$\PP(\ww|\Dc)$. Now suppose we want to compute the probability that a test point $\xx$
+belongs to class $1$. Analytically, we marginalize out $\ww$ as
+\[
+    \PP(\yy=1|\xx,\Dc) = \int \PP(\yy=1|\xx,\ww)\PP(\ww|\Dc)~d\ww.
+\]
+Unfortunately, this integral cannot be computed in closed form (we say the integral is
+intractable). On the other hand, a Simple Monte Carlo approximation of the integral is
+\begin{align*}
+    \PP(\yy=1|\xx,\Dc) \approx \frac{1}{S}\sum_{s=1}^S \PP(\yy=1|\xx,\ww^{(s)}).\tag{$\ww^{(s)}\sim\PP(\ww|\Dc)$}
+\end{align*}
+This is an unbiased estimate of the true predictive probability in the sense that its expectation
+is $\PP(\yy=1|\xx,\Dc)$. This is also easy to compute since we approximated $\PP(\ww|\Dc)$ as
+a Gaussian, so we can sample from it easily.
+\begin{enumerate}[(a)]
+    \item Given a function $f(\xx)$ where $\xx\sim \PP(\xx)$, show that
+        \begin{align*}
+            \EE_{\PP(\{\xx^{(s)}\})}[\hat f] = \EE\left[\frac{1}{S}\sum_{s=1}^S f(\xx^{(s)})\right] = \EE[f(\xx)].\tag{$\xx^{(s)}\sim\PP(\xx)$}
+        \end{align*}
+        Put in other terms, show that our Monte Carlo estimator is unbiased.
+    \item Show that the variance of the Monte Carlo estimate is proportional to
+        $1/S$. That is, show
+        \begin{align*}
+            \mathbb{V}_{\PP(\{\xx^{(s)}\})}[\hat f] = \mathbb{V}[f(\xx)]/S.
+        \end{align*}
+        Note that this means that standard deviation error bars shrink like $1/\sqrt{S}$.
+    \item Plot the posterior predictive distribution $\PP(\yy=1|\xx,\Dc)$ overlaying your data
+        using this Monte Carlo approximation. You plot should look similar to Figure 8.6 in
+        Murphy.
+\end{enumerate}
+
+\end{document}
