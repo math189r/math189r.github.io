@@ -17,7 +17,7 @@
 
 \begin{center}
   \Large\textbf{Linear Algebra Review}\\
-  \large\textit{Conner DiPaolo}
+  \large\textit{Conner DiPaolo} (\large\textit{updated by Iraj Jelodari})
 \end{center}
 \vspace*{1em}
 
@@ -592,7 +592,7 @@ eigenvectors then we can construct (and show) that
 \[
     A = X \Lambda X^{-1}
 \]
-where $X = \m{\xx_1 & \xx_2 & \dots & \xx_n}$ are the $n$ eigenvalues of
+where $X = \m{\xx_1 & \xx_2 & \dots & \xx_n}$ are the $n$ eigenvectors of
 $A$ and $\Lambda = \mathrm{diag}(\lambda_1, \lambda_2,\dots, \lambda_n)$
 are the eigenvalues corresponding to $\xx_i$. If $A$ is symmetric, this becomes
 \[
@@ -680,6 +680,19 @@ Here are just a few of the use cases of the SVD (Singular Value Decomposition):
     to have $\xx,\yy \succeq 0$, a special case of non-negative matrix
     factorization we will see later in the context of recommender systems.
 \end{enumerate}
+
+\subsection{QR Decomposition: $A = QR$}
+A $QR$ decomposition, also known as a $QR$ factorization or $QU$ factorization, is a decomposition of a matrix $A$ into a product of an orthogonal matrix $Q$ (i.e. $Q^TQ = I$) and an upper triangular matrix $R$:
+\[
+    A = QR
+\]
+
+$QR$ decomposition is often used to solve the linear least squares problem and is the basis for a particular eigenvalue algorithm, the $QR$ algorithm.\\
+
+Analogously, we can define $QL$, $RQ$, and $LQ$ decompositions, with $L$ being a lower triangular matrix.\\
+
+There are several methods for actually computing the $QR$ decomposition, such as by means of the \textit{Gram–Schmidt process}, \textit{Householder transformations}, or \textit{Givens rotations}. Each has a number of advantages and disadvantages.
+
 
 \section{Matrix Calculus}
 
